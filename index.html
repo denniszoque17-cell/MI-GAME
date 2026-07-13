@@ -3,323 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escape Room - Primera Persona</title>
+    <title>Escape Room - 3D Engine</title>
     <style>
-        /* --- ESTILOS BASE --- */
-        body {
-            margin: 0; padding: 0;
-            background-color: #000;
-            color: #fff;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
-            user-select: none;
-            touch-action: manipulation;
-        }
-
-        /* --- INTERFAZ DE USUARIO (HUD) --- */
-        #hud {
-            position: absolute; top: 0; left: 0; width: 100%;
-            padding: 20px; box-sizing: border-box;
-            display: flex; justify-content: space-between;
-            z-index: 100; pointer-events: none;
-        }
-        .vida-container {
-            font-size: 20px; font-weight: bold; color: #ff3333;
-            text-shadow: 0 0 10px red; display: flex; align-items: center; gap: 10px;
-        }
-        .barra-vida { width: 150px; height: 15px; background: #333; border: 2px solid #555; }
-        .vida-fill { height: 100%; background: #ff3333; width: 100%; transition: 0.3s; }
-        .sala-contador { font-size: 24px; color: #a855f7; font-weight: bold; text-shadow: 0 0 10px #a855f7; }
-
-        /* --- ESCENA 3D (PRIMERA PERSONA) --- */
-        #escena-3d {
-            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-            perspective: 800px; /* Crea la profundidad 3D */
-            display: flex; justify-content: center; align-items: center;
-            background: radial-gradient(circle at center, #1a1a1a 0%, #000 80%);
-            transition: background 0.2s;
-        }
-
-        /* --- OBJETOS INTERACTIVOS --- */
-        .puerta {
-            width: 160px; height: 320px;
-            background: #2a1c12;
-            border: 8px solid #140d08;
-            transform: translateZ(-200px); /* Aleja la puerta en el espacio 3D */
-            cursor: pointer;
-            position: relative;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);
-            transition: transform 0.3s, filter 0.3s;
-        }
-        .puerta:active { filter: brightness(1.5); }
-        .manija {
-            position: absolute; right: 15px; top: 50%;
-            width: 15px; height: 30px; background: #888; border-radius: 5px;
-        }
-        
-        .texto-puerta {
-            position: absolute; top: 20px; width: 100%;
-            text-align: center; color: #a855f7; font-weight: bold; font-size: 14px;
-            text-shadow: 0 0 5px #000;
-        }
-
-        /* Armario a la izquierda */
-        #casillero {
-            position: absolute; left: 5%; bottom: -5%;
-            width: 120px; height: 400px;
-            background: #111; border: 4px solid #222;
-            transform: rotateY(35deg); /* Lo gira para dar efecto 3D */
-            cursor: pointer;
-            box-shadow: inset 20px 0 30px #000;
-            display: flex; align-items: center; justify-content: center;
-        }
-        #casillero::before {
-            content: "ARMARIO"; color: #333; font-weight: bold; writing-mode: vertical-rl; text-orientation: upright;
-        }
-        #casillero:active { background: #000; }
-
-        /* --- EFECTOS VISUALES --- */
-        @keyframes temblorDaño {
-            0% { transform: translate(0, 0); filter: drop-shadow(0 0 50px red) brightness(2); }
-            25% { transform: translate(-20px, 15px); }
-            50% { transform: translate(20px, -15px); }
-            75% { transform: translate(-10px, 10px); }
-            100% { transform: translate(0, 0); filter: none; }
-        }
-        .daño-efecto { animation: temblorDaño 0.4s ease-in-out; }
-        
-        @keyframes parpadeoEnte {
-            0%, 20%, 40%, 100% { background: radial-gradient(circle at center, #1a1a1a 0%, #000 80%); }
-            10%, 30% { background: #3a0000; }
-        }
-        .luces-fallando { animation: parpadeoEnte 0.5s infinite; }
-
-        @keyframes caminar {
-            0% { transform: translateZ(-200px) scale(1); opacity: 1; }
-            100% { transform: translateZ(200px) scale(2); opacity: 0; }
-        }
-        .animacion-entrar { animation: caminar 0.6s forwards; }
-
-        /* --- MENSAJES Y PANTALLAS --- */
-        #pantalla-mensaje {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 200;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .btn-accion {
-            background: transparent; color: #a855f7; border: 2px solid #a855f7;
-            padding: 15px 40px; font-size: 20px; font-weight: bold; margin-top: 30px;
-            cursor: pointer; border-radius: 5px;
-            text-transform: uppercase;
+        /* --- ESTILOS GENERALES Y MODO OSCURO --- */
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #000; color: #fff;
+            font-family: Arial, sans-serif;
+            overflow: hidden; touch-action: none; /* Evita que la pantalla se mueva */
         }
         .oculto { display: none !important; }
 
-        /* Contenedor doble puerta */
-        #puertas-duo {
-            display: flex; gap: 30px; transform: translateZ(-200px);
+        /* --- PANTALLA DE INICIO (HOME) --- */
+        #pantalla-inicio {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background-color: #050505; z-index: 1000;
         }
+        .imagen-fondo { width: 100%; max-width: 300px; margin-bottom: 30px; filter: drop-shadow(0 0 15px #a855f7); }
+        .boton-ingresar {
+            background-color: transparent; color: #a855f7; border: 2px solid #a855f7;
+            padding: 15px 50px; font-size: 20px; font-weight: bold; cursor: pointer;
+            border-radius: 30px; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); text-transform: uppercase;
+        }
+
+        /* --- MOTOR 3D (CSS) --- */
+        #contenedor-3d {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            perspective: 600px; /* Profundidad del 3D */
+            overflow: hidden;
+        }
+        #camara {
+            position: absolute; width: 100%; height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.1s linear;
+        }
+        #mundo {
+            position: absolute; top: 50%; left: 50%;
+            transform-style: preserve-3d;
+        }
+
+        /* --- LAS PAREDES DEL CUARTO --- */
+        .textura {
+            position: absolute;
+            box-sizing: border-box;
+            border: 2px solid #222;
+            background: url('https://www.transparenttextures.com/patterns/dark-matter.png'), #111;
+            box-shadow: inset 0 0 100px #000; /* Efecto de oscuridad en las esquinas */
+        }
+        /* Definimos un cuarto de 1000x1000 y 500 de alto */
+        #piso { width: 1000px; height: 1000px; transform: translate3d(-500px, 250px, -500px) rotateX(90deg); background: #0a0a0a; border: 1px solid #333; }
+        #techo { width: 1000px; height: 1000px; transform: translate3d(-500px, -250px, -500px) rotateX(-90deg); background: #050505; }
+        #pared-norte { width: 1000px; height: 500px; transform: translate3d(-500px, -250px, -1000px) rotateY(0deg); }
+        #pared-sur { width: 1000px; height: 500px; transform: translate3d(-500px, -250px, 0px) rotateY(180deg); }
+        #pared-este { width: 1000px; height: 500px; transform: translate3d(500px, -250px, -500px) rotateY(-90deg); }
+        #pared-oeste { width: 1000px; height: 500px; transform: translate3d(-500px, -250px, -500px) rotateY(90deg); }
+
+        /* --- OBJETOS INTERACTIVOS (LA PUERTA) --- */
+        #puerta-salida {
+            position: absolute; width: 200px; height: 350px;
+            background: #2a1c12; border: 8px solid #000;
+            transform: translate3d(-100px, -100px, -998px); /* Pegada a la pared norte */
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 0 50px rgba(168,85,247,0.2);
+        }
+        #puerta-salida::after { content: "PUERTA 01"; color: #a855f7; font-weight: bold; position: absolute; top: 20px; }
+        .manija { position: absolute; right: 20px; width: 15px; height: 40px; background: #555; }
+
+        #cartel-pista {
+            position: absolute; width: 300px; height: 150px; background: #ddd; color: #000;
+            transform: translate3d(498px, -50px, -650px) rotateY(-90deg); /* Pegado a pared este */
+            padding: 20px; box-sizing: border-box; font-weight: bold; font-size: 18px; text-align: center;
+        }
+
+        /* --- INTERFAZ DE JUEGO Y JOYSTICK --- */
+        #ui-juego {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; /* Para que los toques pasen a la cámara de abajo */
+            z-index: 100;
+        }
+        .mira {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px; height: 10px; background: rgba(255,255,255,0.5); border-radius: 50%;
+        }
+        
+        /* Joystick Base */
+        #joystick-zona {
+            position: absolute; bottom: 30px; left: 30px;
+            width: 120px; height: 120px; background: rgba(255,255,255,0.1);
+            border-radius: 50%; pointer-events: auto; /* Activa el toque aquí */
+        }
+        #joystick-palanca {
+            position: absolute; top: 35px; left: 35px;
+            width: 50px; height: 50px; background: rgba(168,85,247,0.6);
+            border-radius: 50%; box-shadow: 0 0 10px #a855f7;
+        }
+        
+        #btn-interactuar {
+            position: absolute; bottom: 40px; right: 40px;
+            width: 80px; height: 80px; background: rgba(0,0,0,0.5);
+            border: 2px solid #a855f7; color: #a855f7; border-radius: 50%;
+            font-weight: bold; pointer-events: auto; display: none;
+        }
+
+        /* --- POPUPS DE MENSAJES Y PUZZLES --- */
+        .popup {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 85%; max-width: 350px; background: #111; border: 2px solid #a855f7;
+            padding: 20px; text-align: center; pointer-events: auto; z-index: 200;
+        }
+        .btn-opcion {
+            background: #222; color: #fff; border: 1px solid #555;
+            padding: 15px; margin: 5px 0; width: 100%; cursor: pointer;
+        }
+        .btn-opcion:active { background: #a855f7; color: #000; }
+        
+        /* Efecto de daño */
+        @keyframes daño { 0% { box-shadow: inset 0 0 100px red; } 100% { box-shadow: none; } }
+        .pantalla-roja { animation: daño 0.5s; }
     </style>
 </head>
 <body>
 
-    <div id="hud">
-        <div class="vida-container">
-            ❤️ <div class="barra-vida"><div class="vida-fill" id="vida-barra"></div></div>
-        </div>
-        <div class="sala-contador">PUERTA <span id="num-sala">000</span></div>
+    <div id="pantalla-inicio">
+        <img src="logo.jpg" alt="Logo" class="imagen-fondo">
+        <button class="boton-ingresar" onclick="iniciarJuego()">JUGAR</button>
     </div>
 
-    <div id="pantalla-mensaje">
-        <h1 style="color: #a855f7; font-size: 40px; text-shadow: 0 0 20px #a855f7;">PROYECTO INGENIA</h1>
-        <p style="color: #aaa; text-align: center; max-width: 300px;">Adéntrate en los pasillos de la Politécnica. Si escuchas ruidos o las luces fallan, escóndete en el armario. Si te equivocas de puerta, el sistema te castigará.</p>
-        <button class="btn-accion" onclick="iniciarJuego()">ENTRAR AL PASILLO</button>
+    <div id="contenedor-3d" class="oculto">
+        <div id="camara">
+            <div id="mundo">
+                <div id="piso" class="textura"></div>
+                <div id="techo" class="textura"></div>
+                <div id="pared-norte" class="textura"></div>
+                <div id="pared-sur" class="textura"></div>
+                <div id="pared-este" class="textura"></div>
+                <div id="pared-oeste" class="textura"></div>
+                
+                <div id="puerta-salida" onclick="abrirPuzzle()">
+                    <div class="manija"></div>
+                </div>
+                <div id="cartel-pista">
+                    PISTA DE SEGURIDAD:<br><br>El sistema de matrices es LD. Un mal paso destruirá la sala.
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="escena-3d" class="oculto">
+    <div id="ui-juego" class="oculto">
+        <div class="mira"></div>
+        <div id="pantalla-daño" style="position:absolute; width:100%; height:100%;"></div>
         
-        <div id="casillero" onclick="esconderse()" ontouchstart="esconderse()"></div>
+        <div id="joystick-zona">
+            <div id="joystick-palanca"></div>
+        </div>
         
-        <div id="puerta-centro" class="puerta" onclick="abrirPuerta()">
-            <div class="manija"></div>
+        <div id="popup-puzzle" class="popup oculto">
+            <h3 style="color:#a855f7;">HACKEO DE PUERTA</h3>
+            <p>La consola exige estabilizar la matriz del sistema. ¿Cuál es el procedimiento estricto enseñado en la EPN?</p>
+            <button class="btn-opcion" onclick="verificarRespuesta(false)">A) Calcular determinante directamente</button>
+            <button class="btn-opcion" onclick="verificarRespuesta(true)">B) Trasponer la matriz primero</button>
         </div>
-
-        <div id="puertas-duo" class="oculto">
-            <div class="puerta" onclick="abrirPuertaPuzzle(false)" style="transform: translateZ(0);">
-                <div class="texto-puerta" id="texto-puerta-mala">OPCIÓN A</div>
-                <div class="manija" style="left: 15px;"></div>
-            </div>
-            <div class="puerta" onclick="abrirPuertaPuzzle(true)" style="transform: translateZ(0);">
-                <div class="texto-puerta" id="texto-puerta-buena">OPCIÓN B</div>
-                <div class="manija"></div>
-            </div>
+        
+        <div id="popup-victoria" class="popup oculto">
+            <h2 style="color:#4CAF50;">¡PUERTA ABIERTA!</h2>
+            <p>El procedimiento fue correcto. Has sobrevivido a este nivel.</p>
+            <button class="btn-opcion" onclick="location.reload()">VOLVER AL HOME</button>
         </div>
-
     </div>
 
     <script>
-        let vida = 100;
-        let sala = 0;
-        let estadoSala = 'normal'; // normal, ente, puzzle
-        let enteActivo = false;
-        let temporizadorEnte;
-
-        const escena = document.getElementById('escena-3d');
-        const hudVida = document.getElementById('vida-barra');
-        const hudSala = document.getElementById('num-sala');
-        const msjPantalla = document.getElementById('pantalla-mensaje');
-
-        function actualizarHUD() {
-            hudVida.style.width = vida + '%';
-            let num = sala < 10 ? '00' + sala : (sala < 100 ? '0' + sala : sala);
-            hudSala.innerText = num;
-        }
-
-        function recibirDaño(cantidad, motivo) {
-            vida -= cantidad;
-            if (vida < 0) vida = 0;
-            actualizarHUD();
-            
-            escena.classList.add('daño-efecto');
-            setTimeout(() => escena.classList.remove('daño-efecto'), 400);
-
-            if (vida === 0) {
-                mostrarMensaje("HAS MUERTO", motivo, "REINTENTAR", () => location.reload());
-            }
-        }
-
-        function mostrarMensaje(titulo, texto, txtBoton, accion) {
-            msjPantalla.classList.remove('oculto');
-            escena.classList.add('oculto');
-            msjPantalla.innerHTML = `
-                <h1 style="color: #f00; font-size: 40px; text-shadow: 0 0 20px #f00;">${titulo}</h1>
-                <p style="color: #aaa; text-align: center; max-width: 300px;">${texto}</p>
-                <button class="btn-accion" style="border-color: #f00; color: #f00;" id="btn-msj">${txtBoton}</button>
-            `;
-            document.getElementById('btn-msj').onclick = accion;
-        }
+        // VARIABLES DEL JUEGO
+        let camX = 0, camZ = 0; // Posición del jugador (Empieza en el centro del cuarto)
+        let rotX = 0, rotY = 0; // Rotación de la cámara (Mirar arriba/abajo, izquierda/derecha)
+        
+        // Variables del Joystick
+        let joyActivo = false;
+        let moveX = 0, moveZ = 0;
+        let velocidad = 8;
+        
+        // Elementos DOM
+        const mundo = document.getElementById('mundo');
+        const camara = document.getElementById('camara');
+        const joyZona = document.getElementById('joystick-zona');
+        const joyPalanca = document.getElementById('joystick-palanca');
+        const cont3D = document.getElementById('contenedor-3d');
 
         function iniciarJuego() {
-            msjPantalla.classList.add('oculto');
-            escena.classList.remove('oculto');
-            avanzarSala();
+            document.getElementById('pantalla-inicio').classList.add('oculto');
+            cont3D.classList.remove('oculto');
+            document.getElementById('ui-juego').classList.remove('oculto');
+            actualizarCamara();
+            gameLoop();
         }
 
-        function avanzarSala() {
-            sala++;
-            actualizarHUD();
-            enteActivo = false;
-            escena.classList.remove('luces-fallando');
-            clearTimeout(temporizadorEnte);
+        /* --- LÓGICA DE CÁMARA (MIRAR ALREDEDOR CON EL DEDO) --- */
+        let touchStartX = 0, touchStartY = 0;
+        
+        cont3D.addEventListener('touchstart', (e) => {
+            // Solo toma el toque si NO es en el joystick
+            if (e.target.id !== 'joystick-zona' && e.target.id !== 'joystick-palanca') {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }
+        });
 
-            // Resetea clases de animación
-            document.getElementById('puerta-centro').classList.remove('animacion-entrar');
-            document.getElementById('puerta-centro').classList.remove('oculto');
-            document.getElementById('puertas-duo').classList.add('oculto');
+        cont3D.addEventListener('touchmove', (e) => {
+            if (e.target.id !== 'joystick-zona' && e.target.id !== 'joystick-palanca') {
+                let deltaX = e.touches[0].clientX - touchStartX;
+                let deltaY = e.touches[0].clientY - touchStartY;
+                
+                rotY -= deltaX * 0.3; // Sensibilidad horizontal
+                rotX += deltaY * 0.3; // Sensibilidad vertical
+                
+                // Limitar la vista arriba/abajo
+                if (rotX > 60) rotX = 60;
+                if (rotX < -60) rotX = -60;
+                
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                actualizarCamara();
+            }
+        });
 
-            // Lógica aleatoria de salas
-            let prob = Math.random();
+        /* --- LÓGICA DEL JOYSTICK (CAMINAR) --- */
+        let joyCenterX, joyCenterY;
+
+        joyZona.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            joyActivo = true;
+            let rect = joyZona.getBoundingClientRect();
+            joyCenterX = rect.left + rect.width / 2;
+            joyCenterY = rect.top + rect.height / 2;
+            actualizarJoystick(e.touches[0]);
+        }, {passive: false});
+
+        joyZona.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (joyActivo) actualizarJoystick(e.touches[0]);
+        }, {passive: false});
+
+        joyZona.addEventListener('touchend', () => {
+            joyActivo = false;
+            joyPalanca.style.transform = `translate(0px, 0px)`;
+            moveX = 0; moveZ = 0;
+        });
+
+        function actualizarJoystick(touch) {
+            let dx = touch.clientX - joyCenterX;
+            let dy = touch.clientY - joyCenterY;
             
-            // Cada 4 salas (o 30% de probabilidad) hay un Puzzle Técnico
-            if (sala % 4 === 0) {
-                generarPuzzle();
-            } 
-            // 35% de probabilidad de que aparezca El Ente
-            else if (prob < 0.35 && sala > 1) {
-                estadoSala = 'ente';
-                setTimeout(() => {
-                    enteActivo = true;
-                    escena.classList.add('luces-fallando');
-                    
-                    // Si no se esconde en 3 segundos, recibe daño
-                    temporizadorEnte = setTimeout(() => {
-                        if (enteActivo) {
-                            escena.classList.remove('luces-fallando');
-                            enteActivo = false;
-                            recibirDaño(40, "El Ente te atrapó en el pasillo por no esconderte a tiempo.");
-                        }
-                    }, 3000);
-                }, 1000);
-            } 
-            // Sala Normal
-            else {
-                estadoSala = 'normal';
+            // Limitar la palanca dentro del círculo
+            let distancia = Math.sqrt(dx*dx + dy*dy);
+            let maxDist = 35; // Radio de movimiento
+            if (distancia > maxDist) {
+                dx = (dx / distancia) * maxDist;
+                dy = (dy / distancia) * maxDist;
+            }
+            
+            joyPalanca.style.transform = `translate(${dx}px, ${dy}px)`;
+            
+            // Normalizar valores para el movimiento (-1 a 1)
+            moveX = dx / maxDist;
+            moveZ = dy / maxDist; // dy negativo es hacia arriba en pantalla, osea caminar adelante
+        }
+
+        /* --- MOTOR DE MOVIMIENTO --- */
+        function gameLoop() {
+            if (joyActivo) {
+                // Calcular la dirección basada en hacia dónde mira la cámara (rotY)
+                let angleRad = rotY * (Math.PI / 180);
+                
+                // Mover adelante/atrás (Eje Z del joystick)
+                let dirZ_X = Math.sin(angleRad) * moveZ * velocidad;
+                let dirZ_Z = Math.cos(angleRad) * moveZ * velocidad;
+                
+                // Mover lados (Eje X del joystick)
+                let dirX_X = Math.cos(angleRad) * moveX * velocidad;
+                let dirX_Z = -Math.sin(angleRad) * moveX * velocidad;
+
+                let nextX = camX - dirZ_X - dirX_X;
+                let nextZ = camZ + dirZ_Z + dirX_Z;
+
+                // Colisiones Básicas (Los bordes del cuarto son a 450px para no atravesar paredes)
+                if (nextX > -450 && nextX < 450) camX = nextX;
+                if (nextZ > -950 && nextZ < -50) camZ = nextZ; // El centro del cuarto está en Z=-500
+
+                actualizarCamara();
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        function actualizarCamara() {
+            // Movemos el MUNDO en dirección opuesta a la cámara
+            mundo.style.transform = `translate3d(${-camX}px, 0px, ${-camZ}px)`;
+            // Rotamos la CÁMARA
+            camara.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+        }
+
+        /* --- INTERACCIÓN Y PUZZLES --- */
+        function abrirPuzzle() {
+            // Verifica que el jugador esté cerca de la puerta (La puerta está en Z=-1000)
+            if (camZ < -700) {
+                document.getElementById('popup-puzzle').classList.remove('oculto');
+                joyActivo = false; // Detener movimiento
+            } else {
+                alert("Acércate más a la puerta para inspeccionarla.");
             }
         }
 
-        // --- MECÁNICA: ARMARIO ---
-        function esconderse() {
-            if (estadoSala === 'ente' && enteActivo) {
-                // Se escondió a tiempo!
-                clearTimeout(temporizadorEnte);
-                enteActivo = false;
-                escena.classList.remove('luces-fallando');
-                // Al salir del armario, avanza automáticamente
-                setTimeout(avanzarSala, 500);
-            } else if (estadoSala === 'normal') {
-                // Se escondió sin razón, pierde tiempo pero no vida
-            }
-        }
-
-        // --- MECÁNICA: ABRIR PUERTA SIMPLE ---
-        function abrirPuerta() {
-            if (enteActivo) {
-                // Abrió la puerta mientras venía el monstruo
-                recibirDaño(50, "Abriste la puerta justo cuando el Ente pasaba. Debiste usar el armario.");
-                clearTimeout(temporizadorEnte);
-                enteActivo = false;
-                escena.classList.remove('luces-fallando');
+        function verificarRespuesta(correcta) {
+            document.getElementById('popup-puzzle').classList.add('oculto');
+            if (correcta) {
+                document.getElementById('popup-victoria').classList.remove('oculto');
             } else {
-                // Efecto de caminar hacia adelante
-                const puerta = document.getElementById('puerta-centro');
-                puerta.classList.add('animacion-entrar');
-                setTimeout(avanzarSala, 600);
-            }
-        }
-
-        // --- MECÁNICA: PUZZLE DE INGENIERÍA ---
-        function generarPuzzle() {
-            estadoSala = 'puzzle';
-            document.getElementById('puerta-centro').classList.add('oculto');
-            document.getElementById('puertas-duo').classList.remove('oculto');
-
-            const pMala = document.getElementById('texto-puerta-mala');
-            const pBuena = document.getElementById('texto-puerta-buena');
-
-            // Dependiendo del nivel, lanza diferentes trampas. 
-            // Aquí referenciamos el clásico problema de Álgebra Lineal.
-            if (sala <= 4) {
-                pMala.innerText = "SISTEMA: Resolver Matriz Directamente";
-                pBuena.innerText = "SISTEMA: Trasponer Matriz Primero";
-                window.msgErrorPuzzle = "¡Anomalía detectada! A ti te enseñaron a trasponer la matriz primero antes de resolver. El sistema de seguridad te electrocutó.";
-            } else {
-                pMala.innerText = "LÍQUIDO: Fuerzas de Dispersión";
-                pBuena.innerText = "LÍQUIDO: Puentes de Hidrógeno";
-                window.msgErrorPuzzle = "Presión inestable. El líquido requería fuerzas intermoleculares más fuertes (Puentes de Hidrógeno).";
-            }
-
-            // Aleatorizar el lado de la puerta correcta (50/50)
-            if (Math.random() > 0.5) {
-                let temp = pMala.innerText;
-                pMala.innerText = pBuena.innerText;
-                pBuena.innerText = temp;
-                document.getElementById('puertas-duo').children[0].setAttribute('onclick', 'abrirPuertaPuzzle(true)');
-                document.getElementById('puertas-duo').children[1].setAttribute('onclick', 'abrirPuertaPuzzle(false)');
-            } else {
-                document.getElementById('puertas-duo').children[0].setAttribute('onclick', 'abrirPuertaPuzzle(false)');
-                document.getElementById('puertas-duo').children[1].setAttribute('onclick', 'abrirPuertaPuzzle(true)');
-            }
-        }
-
-        function abrirPuertaPuzzle(esCorrecta) {
-            if (esCorrecta) {
-                // Avanza
-                avanzarSala();
-            } else {
-                // Trampa activada
-                recibirDaño(35, window.msgErrorPuzzle);
-                if (vida > 0) {
-                    avanzarSala(); // Te deja pasar pero muy lastimado
-                }
+                const pantallaDaño = document.getElementById('pantalla-daño');
+                pantallaDaño.classList.remove('pantalla-roja');
+                void pantallaDaño.offsetWidth; // Reiniciar animación
+                pantallaDaño.classList.add('pantalla-roja');
+                alert("¡ERROR! Resolviste sin trasponer. El sistema colapsó.");
             }
         }
     </script>
