@@ -2,393 +2,324 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crowlning Skills - Escape Room</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Escape Room - Primera Persona</title>
     <style>
-        /* --- ESTILOS BASE Y MODO OSCURO --- */
+        /* --- ESTILOS BASE --- */
         body {
-            font-family: 'Courier New', Courier, monospace; /* Fuente tipo terminal/hackeo */
-            margin: 0;
-            padding: 0;
-            background-color: #050505; 
-            color: #ffffff; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            text-align: center;
-            overflow: hidden; /* Evita que la pantalla se mueva */
-        }
-        .pantalla {
-            width: 100%;
-            max-width: 450px;
-            padding: 25px;
-            box-sizing: border-box;
-        }
-
-        /* --- BOTONES Y MENÚ --- */
-        .imagen-fondo { width: 100%; max-width: 300px; margin-bottom: 20px; }
-        .boton-ingresar {
-            background-color: transparent;
-            color: #a855f7; 
-            border: 2px solid #a855f7;
-            padding: 15px 50px;
-            font-size: 20px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(168, 85, 247, 0.5); 
-            text-transform: uppercase;
-        }
-        .boton-ingresar:hover { background-color: #a855f7; color: #000; }
-        
-        .boton-juego {
-            background-color: #111; 
-            color: #a855f7;
-            border: 1px solid #333;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            margin: 8px 0;
-            width: 100%;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.2s;
-        }
-        .boton-juego:hover { border-color: #a855f7; box-shadow: inset 0 0 10px rgba(168,85,247,0.2); }
-        
-        /* --- LECTURA SIN PRESIÓN (PRE-JUEGO) --- */
-        .caja-historia {
-            background-color: #111;
-            border-left: 5px solid #a855f7;
-            padding: 20px;
-            text-align: left;
-            margin-bottom: 30px;
-            font-size: 15px;
-            line-height: 1.6;
-        }
-        .boton-hackeo {
-            background-color: #8b0000;
-            color: white;
-            border: 2px solid #ff0000;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0 0 15px rgba(255,0,0,0.4);
-            animation: latido 1.5s infinite alternate;
-        }
-
-        /* --- INTERFAZ DEL JUEGO ACTIVO (DOORS VIBE) --- */
-        @keyframes parpadeoFalla {
-            0% { opacity: 1; text-shadow: 0 0 20px red; }
-            10% { opacity: 0.2; }
-            20% { opacity: 1; }
-            80% { opacity: 1; }
-            85% { opacity: 0.1; }
-            100% { opacity: 1; }
-        }
-        @keyframes latido {
-            from { transform: scale(1); }
-            to { transform: scale(1.05); box-shadow: 0 0 25px rgba(255,0,0,0.8); }
-        }
-        .reloj {
-            font-size: 45px;
-            font-weight: bold;
-            color: #ff3333;
-            margin-bottom: 20px;
-            animation: parpadeoFalla 3s infinite;
-        }
-        
-        /* --- MECÁNICAS INTERACTIVAS --- */
-        /* Teclado numérico */
-        .teclado-display {
+            margin: 0; padding: 0;
             background-color: #000;
-            border: 2px solid #4CAF50;
-            color: #4CAF50;
-            font-size: 30px;
-            padding: 10px;
-            letter-spacing: 5px;
-            margin-bottom: 20px;
-            height: 40px;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            user-select: none;
+            touch-action: manipulation;
         }
-        .grid-teclado {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-        .btn-tecla {
-            background-color: #222;
-            color: white;
-            border: 1px solid #555;
-            padding: 15px;
-            font-size: 20px;
-            cursor: pointer;
-        }
-        .btn-tecla:active { background-color: #555; }
-        .btn-enter { background-color: #4CAF50; color: black; font-weight: bold; }
-        .btn-clear { background-color: #f44336; color: white; font-weight: bold; }
 
-        /* Panel de Control (Matrices/Sistemas) */
-        .panel-control { display: flex; flex-direction: column; gap: 15px; }
-        .btn-sistema {
-            background-color: #1a1a1a;
-            border: 2px solid #00bcd4;
-            color: #00bcd4;
-            padding: 20px;
-            font-size: 18px;
+        /* --- INTERFAZ DE USUARIO (HUD) --- */
+        #hud {
+            position: absolute; top: 0; left: 0; width: 100%;
+            padding: 20px; box-sizing: border-box;
+            display: flex; justify-content: space-between;
+            z-index: 100; pointer-events: none;
+        }
+        .vida-container {
+            font-size: 20px; font-weight: bold; color: #ff3333;
+            text-shadow: 0 0 10px red; display: flex; align-items: center; gap: 10px;
+        }
+        .barra-vida { width: 150px; height: 15px; background: #333; border: 2px solid #555; }
+        .vida-fill { height: 100%; background: #ff3333; width: 100%; transition: 0.3s; }
+        .sala-contador { font-size: 24px; color: #a855f7; font-weight: bold; text-shadow: 0 0 10px #a855f7; }
+
+        /* --- ESCENA 3D (PRIMERA PERSONA) --- */
+        #escena-3d {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            perspective: 800px; /* Crea la profundidad 3D */
+            display: flex; justify-content: center; align-items: center;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 80%);
+            transition: background 0.2s;
+        }
+
+        /* --- OBJETOS INTERACTIVOS --- */
+        .puerta {
+            width: 160px; height: 320px;
+            background: #2a1c12;
+            border: 8px solid #140d08;
+            transform: translateZ(-200px); /* Aleja la puerta en el espacio 3D */
             cursor: pointer;
+            position: relative;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);
+            transition: transform 0.3s, filter 0.3s;
+        }
+        .puerta:active { filter: brightness(1.5); }
+        .manija {
+            position: absolute; right: 15px; top: 50%;
+            width: 15px; height: 30px; background: #888; border-radius: 5px;
+        }
+        
+        .texto-puerta {
+            position: absolute; top: 20px; width: 100%;
+            text-align: center; color: #a855f7; font-weight: bold; font-size: 14px;
+            text-shadow: 0 0 5px #000;
+        }
+
+        /* Armario a la izquierda */
+        #casillero {
+            position: absolute; left: 5%; bottom: -5%;
+            width: 120px; height: 400px;
+            background: #111; border: 4px solid #222;
+            transform: rotateY(35deg); /* Lo gira para dar efecto 3D */
+            cursor: pointer;
+            box-shadow: inset 20px 0 30px #000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #casillero::before {
+            content: "ARMARIO"; color: #333; font-weight: bold; writing-mode: vertical-rl; text-orientation: upright;
+        }
+        #casillero:active { background: #000; }
+
+        /* --- EFECTOS VISUALES --- */
+        @keyframes temblorDaño {
+            0% { transform: translate(0, 0); filter: drop-shadow(0 0 50px red) brightness(2); }
+            25% { transform: translate(-20px, 15px); }
+            50% { transform: translate(20px, -15px); }
+            75% { transform: translate(-10px, 10px); }
+            100% { transform: translate(0, 0); filter: none; }
+        }
+        .daño-efecto { animation: temblorDaño 0.4s ease-in-out; }
+        
+        @keyframes parpadeoEnte {
+            0%, 20%, 40%, 100% { background: radial-gradient(circle at center, #1a1a1a 0%, #000 80%); }
+            10%, 30% { background: #3a0000; }
+        }
+        .luces-fallando { animation: parpadeoEnte 0.5s infinite; }
+
+        @keyframes caminar {
+            0% { transform: translateZ(-200px) scale(1); opacity: 1; }
+            100% { transform: translateZ(200px) scale(2); opacity: 0; }
+        }
+        .animacion-entrar { animation: caminar 0.6s forwards; }
+
+        /* --- MENSAJES Y PANTALLAS --- */
+        #pantalla-mensaje {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 200;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .btn-accion {
+            background: transparent; color: #a855f7; border: 2px solid #a855f7;
+            padding: 15px 40px; font-size: 20px; font-weight: bold; margin-top: 30px;
+            cursor: pointer; border-radius: 5px;
             text-transform: uppercase;
         }
-        .btn-sistema:hover { background-color: #00bcd4; color: black; }
-        .consola-log {
-            background-color: #000;
-            border: 1px solid #333;
-            color: #00ff00;
-            padding: 10px;
-            height: 80px;
-            text-align: left;
-            font-size: 12px;
-            overflow-y: auto;
-            margin-bottom: 15px;
-        }
-
         .oculto { display: none !important; }
+
+        /* Contenedor doble puerta */
+        #puertas-duo {
+            display: flex; gap: 30px; transform: translateZ(-200px);
+        }
     </style>
 </head>
 <body>
 
-    <!-- 1. PANTALLA PRINCIPAL -->
-    <div id="inicio" class="pantalla">
-        <img src="logo.jpg" alt="Crowlning Skills Logo" class="imagen-fondo">
-        <button class="boton-ingresar" onclick="cambiarPantalla('inicio', 'menu')">ENTRAR AL SISTEMA</button>
-    </div>
-
-    <!-- 2. PANTALLA DE MENÚ -->
-    <div id="menu" class="pantalla oculto">
-        <p style="color: #888; font-size: 14px;">SELECCIONE EL PROTOCOLO DE EMERGENCIA:</p>
-        <button class="boton-juego" onclick="mostrarHistoria('juego1')">PUERTA 01: Código Cero</button>
-        <button class="boton-juego" onclick="mostrarHistoria('juego3')">PUERTA 02: Falla del Núcleo</button>
-        <button class="boton-juego" onclick="mostrarHistoria('juego5')">PUERTA 03: Protocolo Final</button>
-        <button class="btn-sistema" style="margin-top: 30px; width: 100%; border-color: #555; color: #888;" onclick="cambiarPantalla('menu', 'inicio')">DESCONECTAR</button>
-    </div>
-
-    <!-- 3. SALA DE LECTURA (TIEMPO INFINITO) -->
-    <div id="pantalla-historia" class="pantalla oculto">
-        <h2 id="historia-titulo" style="color: #a855f7; text-transform: uppercase;">Misión</h2>
-        <div class="caja-historia" id="historia-texto">
-            <!-- El texto se inyecta aquí -->
+    <div id="hud">
+        <div class="vida-container">
+            ❤️ <div class="barra-vida"><div class="vida-fill" id="vida-barra"></div></div>
         </div>
-        <p style="color: #f44336; font-size: 12px; margin-bottom: 20px;">ADVERTENCIA: El temporizador iniciará al presionar el botón.</p>
-        <button class="boton-hackeo" onclick="iniciarReto()">INICIAR HACKEO</button>
+        <div class="sala-contador">PUERTA <span id="num-sala">000</span></div>
     </div>
 
-    <!-- 4. PANTALLA DEL JUEGO ACTIVO (CON TEMPORIZADOR) -->
-    <div id="pantalla-juego" class="pantalla oculto">
-        <div class="reloj" id="tiempo-restante">00.00</div>
+    <div id="pantalla-mensaje">
+        <h1 style="color: #a855f7; font-size: 40px; text-shadow: 0 0 20px #a855f7;">PROYECTO INGENIA</h1>
+        <p style="color: #aaa; text-align: center; max-width: 300px;">Adéntrate en los pasillos de la Politécnica. Si escuchas ruidos o las luces fallan, escóndete en el armario. Si te equivocas de puerta, el sistema te castigará.</p>
+        <button class="btn-accion" onclick="iniciarJuego()">ENTRAR AL PASILLO</button>
+    </div>
+
+    <div id="escena-3d" class="oculto">
         
-        <!-- MECÁNICA 1: TECLADO (Oculto por defecto) -->
-        <div id="mecanica-teclado" class="oculto">
-            <p style="color: #aaa; font-size: 14px;">INTRODUZCA EL CÓDIGO DE ANULACIÓN</p>
-            <div class="teclado-display" id="display-codigo"></div>
-            <div class="grid-teclado">
-                <button class="btn-tecla" onclick="pulsarTecla(1)">1</button>
-                <button class="btn-tecla" onclick="pulsarTecla(2)">2</button>
-                <button class="btn-tecla" onclick="pulsarTecla(3)">3</button>
-                <button class="btn-tecla" onclick="pulsarTecla(4)">4</button>
-                <button class="btn-tecla" onclick="pulsarTecla(5)">5</button>
-                <button class="btn-tecla" onclick="pulsarTecla(6)">6</button>
-                <button class="btn-tecla" onclick="pulsarTecla(7)">7</button>
-                <button class="btn-tecla" onclick="pulsarTecla(8)">8</button>
-                <button class="btn-tecla" onclick="pulsarTecla(9)">9</button>
-                <button class="btn-tecla btn-clear" onclick="limpiarTeclado()">C</button>
-                <button class="btn-tecla" onclick="pulsarTecla(0)">0</button>
-                <button class="btn-tecla btn-enter" onclick="verificarCodigo()">ENT</button>
+        <div id="casillero" onclick="esconderse()" ontouchstart="esconderse()"></div>
+        
+        <div id="puerta-centro" class="puerta" onclick="abrirPuerta()">
+            <div class="manija"></div>
+        </div>
+
+        <div id="puertas-duo" class="oculto">
+            <div class="puerta" onclick="abrirPuertaPuzzle(false)" style="transform: translateZ(0);">
+                <div class="texto-puerta" id="texto-puerta-mala">OPCIÓN A</div>
+                <div class="manija" style="left: 15px;"></div>
+            </div>
+            <div class="puerta" onclick="abrirPuertaPuzzle(true)" style="transform: translateZ(0);">
+                <div class="texto-puerta" id="texto-puerta-buena">OPCIÓN B</div>
+                <div class="manija"></div>
             </div>
         </div>
 
-        <!-- MECÁNICA 2: MATRIZ Y SISTEMA (Oculto por defecto) -->
-        <div id="mecanica-sistema" class="oculto">
-            <div class="consola-log" id="consola-matriz">
-                > Sistema bloqueado.<br>
-                > Matriz de datos principal corrupta.<br>
-                > Esperando secuencia matemática de reinicio...
-            </div>
-            <div class="panel-control">
-                <button class="btn-sistema" onclick="ejecutarMatriz('calcular')">Calcular Determinante</button>
-                <button class="btn-sistema" onclick="ejecutarMatriz('trasponer')">Trasponer Matriz</button>
-                <button class="btn-sistema" style="border-color: #a855f7; color: #a855f7;" onclick="ejecutarMatriz('resolver')">EJECUTAR RESOLUCIÓN</button>
-            </div>
-        </div>
-
-        <!-- MECÁNICA 3: DOS PALANCAS (Oculto por defecto) -->
-        <div id="mecanica-palancas" class="oculto">
-            <p style="color: #aaa; font-size: 14px; margin-bottom: 30px;">LA ENERGÍA ES LIMITADA. TIRE DE UNA PALANCA PARA DESVIARLA.</p>
-            <div class="panel-control">
-                <button class="boton-hackeo" style="background-color: #333; border-color: #555; animation: none; padding: 30px;" onclick="evaluarFinal(false)">SALVAR BASE DE DATOS<br><span style="font-size: 12px; color:#888;">(Prioridad Corporativa)</span></button>
-                
-                <button class="boton-hackeo" style="background-color: #333; border-color: #555; animation: none; padding: 30px;" onclick="evaluarFinal(true)">SELLAR VÁLVULAS<br><span style="font-size: 12px; color:#888;">(Prioridad Ambiental)</span></button>
-            </div>
-        </div>
     </div>
 
-    <!-- 5. RESULTADOS -->
-    <div id="resultado-victoria" class="pantalla oculto">
-        <h1 style="color: #4CAF50; font-size: 35px; text-shadow: 0 0 10px #4CAF50;">PUERTA ABIERTA</h1>
-        <p style="color: #aaa; font-size: 16px; margin-bottom: 40px;">La amenaza ha sido neutralizada correctamente.</p>
-        <button class="btn-sistema" onclick="cambiarPantalla('resultado-victoria', 'menu')" style="width: 100%;">Volver al Menú Principal</button>
-    </div>
-
-    <div id="resultado-derrota" class="pantalla oculto">
-        <h1 style="color: #f44336; font-size: 35px; text-shadow: 0 0 10px #f44336;">FATAL ERROR</h1>
-        <p id="mensaje-derrota" style="color: #aaa; font-size: 16px; margin-bottom: 40px;">El sistema ha colapsado. La ingeniería requiere precisión y trabajo bajo presión.</p>
-        <button class="boton-hackeo" onclick="cambiarPantalla('resultado-derrota', 'menu')" style="width: 100%;">REINICIAR SISTEMA</button>
-    </div>
-
-    <!-- --- LÓGICA DEL JUEGO (JAVASCRIPT) --- -->
     <script>
-        // BASE DE DATOS DE LOS NIVELES
-        const niveles = {
-            'juego1': {
-                titulo: "Código Cero",
-                historia: "Estás atrapado en la Sala de Servidores. Las puertas se sellaron. Sobre el escritorio hay una nota arrugada que dice: <br><br><em>'Seguridad EPN. En caso de bloqueo, el código de anulación es el año de fundación de la Escuela Politécnica Nacional.'</em><br><br>El oxígeno se agotará pronto.",
-                tiempo: 45,
-                mecanica: 'teclado'
-            },
-            'juego3': {
-                titulo: "Falla del Núcleo",
-                historia: "La red de la planta está colapsando. Debes reiniciar el núcleo resolviendo la matriz de datos central desde la consola de emergencia.<br><br>El sistema es antiguo y estricto con los pasos matemáticos. Si te saltas el orden correcto de resolución, el núcleo explotará.",
-                tiempo: 30,
-                mecanica: 'sistema'
-            },
-            'juego5': {
-                titulo: "Protocolo Final",
-                historia: "Fuga inminente detectada. Tienes energía suficiente para accionar un solo mecanismo de emergencia.<br><br>Puedes salvar el servidor con los datos del proyecto (valorado en millones para la empresa), o puedes sellar las válvulas exteriores para evitar que los químicos lleguen al río de la ciudad.",
-                tiempo: 20,
-                mecanica: 'palancas'
-            }
-        };
+        let vida = 100;
+        let sala = 0;
+        let estadoSala = 'normal'; // normal, ente, puzzle
+        let enteActivo = false;
+        let temporizadorEnte;
 
-        let nivelActual = '';
-        let temporizador;
-        let codigoIngresado = '';
-        let matrizEstado = 0; // Para el juego 3
+        const escena = document.getElementById('escena-3d');
+        const hudVida = document.getElementById('vida-barra');
+        const hudSala = document.getElementById('num-sala');
+        const msjPantalla = document.getElementById('pantalla-mensaje');
 
-        function cambiarPantalla(pantallaActual, pantallaNueva) {
-            document.getElementById(pantallaActual).classList.add('oculto');
-            document.getElementById(pantallaNueva).classList.remove('oculto');
+        function actualizarHUD() {
+            hudVida.style.width = vida + '%';
+            let num = sala < 10 ? '00' + sala : (sala < 100 ? '0' + sala : sala);
+            hudSala.innerText = num;
         }
 
-        function mostrarHistoria(id) {
-            nivelActual = id;
-            const data = niveles[id];
-            document.getElementById('historia-titulo').innerText = data.titulo;
-            document.getElementById('historia-texto').innerHTML = data.historia;
-            cambiarPantalla('menu', 'pantalla-historia');
-        }
-
-        function iniciarReto() {
-            cambiarPantalla('pantalla-historia', 'pantalla-juego');
-            const data = niveles[nivelActual];
+        function recibirDaño(cantidad, motivo) {
+            vida -= cantidad;
+            if (vida < 0) vida = 0;
+            actualizarHUD();
             
-            // Ocultar todas las mecánicas primero
-            document.getElementById('mecanica-teclado').classList.add('oculto');
-            document.getElementById('mecanica-sistema').classList.add('oculto');
-            document.getElementById('mecanica-palancas').classList.add('oculto');
+            escena.classList.add('daño-efecto');
+            setTimeout(() => escena.classList.remove('daño-efecto'), 400);
 
-            // Mostrar la mecánica correspondiente
-            if (data.mecanica === 'teclado') {
-                document.getElementById('mecanica-teclado').classList.remove('oculto');
-                limpiarTeclado();
-            } else if (data.mecanica === 'sistema') {
-                document.getElementById('mecanica-sistema').classList.remove('oculto');
-                matrizEstado = 0;
-                document.getElementById('consola-matriz').innerHTML = "> Sistema bloqueado.<br>> Esperando secuencia matemática de reinicio...";
-            } else if (data.mecanica === 'palancas') {
-                document.getElementById('mecanica-palancas').classList.remove('oculto');
+            if (vida === 0) {
+                mostrarMensaje("HAS MUERTO", motivo, "REINTENTAR", () => location.reload());
             }
+        }
 
-            // Iniciar Reloj
-            let tiempo = data.tiempo;
-            actualizarReloj(tiempo);
+        function mostrarMensaje(titulo, texto, txtBoton, accion) {
+            msjPantalla.classList.remove('oculto');
+            escena.classList.add('oculto');
+            msjPantalla.innerHTML = `
+                <h1 style="color: #f00; font-size: 40px; text-shadow: 0 0 20px #f00;">${titulo}</h1>
+                <p style="color: #aaa; text-align: center; max-width: 300px;">${texto}</p>
+                <button class="btn-accion" style="border-color: #f00; color: #f00;" id="btn-msj">${txtBoton}</button>
+            `;
+            document.getElementById('btn-msj').onclick = accion;
+        }
+
+        function iniciarJuego() {
+            msjPantalla.classList.add('oculto');
+            escena.classList.remove('oculto');
+            avanzarSala();
+        }
+
+        function avanzarSala() {
+            sala++;
+            actualizarHUD();
+            enteActivo = false;
+            escena.classList.remove('luces-fallando');
+            clearTimeout(temporizadorEnte);
+
+            // Resetea clases de animación
+            document.getElementById('puerta-centro').classList.remove('animacion-entrar');
+            document.getElementById('puerta-centro').classList.remove('oculto');
+            document.getElementById('puertas-duo').classList.add('oculto');
+
+            // Lógica aleatoria de salas
+            let prob = Math.random();
             
-            clearInterval(temporizador);
-            temporizador = setInterval(() => {
-                tiempo--;
-                actualizarReloj(tiempo);
-                if(tiempo <= 0) {
-                    terminarJuego(false, "El tiempo se agotó.");
-                }
-            }, 1000);
-        }
-
-        function actualizarReloj(segundos) {
-            let seg = segundos < 10 ? '0' + segundos : segundos;
-            document.getElementById('tiempo-restante').innerText = `00:${seg}`;
-        }
-
-        function terminarJuego(victoria, mensajeError = "") {
-            clearInterval(temporizador);
-            if (victoria) {
-                cambiarPantalla('pantalla-juego', 'resultado-victoria');
-            } else {
-                document.getElementById('mensaje-derrota').innerText = mensajeError;
-                cambiarPantalla('pantalla-juego', 'resultado-derrota');
-            }
-        }
-
-        // --- LÓGICA MECÁNICA 1: TECLADO ---
-        function pulsarTecla(num) {
-            if (codigoIngresado.length < 4) {
-                codigoIngresado += num;
-                document.getElementById('display-codigo').innerText = codigoIngresado;
-            }
-        }
-        function limpiarTeclado() {
-            codigoIngresado = '';
-            document.getElementById('display-codigo').innerText = '';
-        }
-        function verificarCodigo() {
-            if (codigoIngresado === '1869') { // Fundación EPN
-                terminarJuego(true);
-            } else {
-                terminarJuego(false, "Código incorrecto. Acceso denegado.");
-            }
-        }
-
-        // --- LÓGICA MECÁNICA 2: MATRIZ EPN ---
-        function ejecutarMatriz(accion) {
-            const consola = document.getElementById('consola-matriz');
-            
-            if (accion === 'calcular') {
-                consola.innerHTML += "<br><span style='color:red;'>> ERROR FATAL: No se puede calcular determinante en este estado.</span>";
-                setTimeout(() => terminarJuego(false, "Fallaste. Olvidaste el procedimiento correcto para resolver el sistema de matrices."), 1500);
+            // Cada 4 salas (o 30% de probabilidad) hay un Puzzle Técnico
+            if (sala % 4 === 0) {
+                generarPuzzle();
             } 
-            else if (accion === 'trasponer') {
-                matrizEstado = 1; // Primer paso correcto
-                consola.innerHTML += "<br>> Matriz traspuesta exitosamente.";
-                consola.scrollTop = consola.scrollHeight;
-            }
-            else if (accion === 'resolver') {
-                if (matrizEstado === 1) {
-                    consola.innerHTML += "<br>> Resolución exitosa. Núcleo estabilizado.";
-                    setTimeout(() => terminarJuego(true), 1000);
-                } else {
-                    consola.innerHTML += "<br><span style='color:red;'>> ERROR: Matriz incompatible. Trasponga la matriz primero.</span>";
-                    setTimeout(() => terminarJuego(false, "Ingresaste el comando de resolución sin haber traspuesto la matriz primero. El sistema colapsó."), 2000);
-                }
+            // 35% de probabilidad de que aparezca El Ente
+            else if (prob < 0.35 && sala > 1) {
+                estadoSala = 'ente';
+                setTimeout(() => {
+                    enteActivo = true;
+                    escena.classList.add('luces-fallando');
+                    
+                    // Si no se esconde en 3 segundos, recibe daño
+                    temporizadorEnte = setTimeout(() => {
+                        if (enteActivo) {
+                            escena.classList.remove('luces-fallando');
+                            enteActivo = false;
+                            recibirDaño(40, "El Ente te atrapó en el pasillo por no esconderte a tiempo.");
+                        }
+                    }, 3000);
+                }, 1000);
+            } 
+            // Sala Normal
+            else {
+                estadoSala = 'normal';
             }
         }
 
-        // --- LÓGICA MECÁNICA 3: PALANCAS (ÉTICA) ---
-        function evaluarFinal(decisionCorrecta) {
-            if (decisionCorrecta) {
-                terminarJuego(true);
+        // --- MECÁNICA: ARMARIO ---
+        function esconderse() {
+            if (estadoSala === 'ente' && enteActivo) {
+                // Se escondió a tiempo!
+                clearTimeout(temporizadorEnte);
+                enteActivo = false;
+                escena.classList.remove('luces-fallando');
+                // Al salir del armario, avanza automáticamente
+                setTimeout(avanzarSala, 500);
+            } else if (estadoSala === 'normal') {
+                // Se escondió sin razón, pierde tiempo pero no vida
+            }
+        }
+
+        // --- MECÁNICA: ABRIR PUERTA SIMPLE ---
+        function abrirPuerta() {
+            if (enteActivo) {
+                // Abrió la puerta mientras venía el monstruo
+                recibirDaño(50, "Abriste la puerta justo cuando el Ente pasaba. Debiste usar el armario.");
+                clearTimeout(temporizadorEnte);
+                enteActivo = false;
+                escena.classList.remove('luces-fallando');
             } else {
-                terminarJuego(false, "Decidiste salvar el dinero de la empresa y contaminaste la ciudad. Tu ética profesional falló.");
+                // Efecto de caminar hacia adelante
+                const puerta = document.getElementById('puerta-centro');
+                puerta.classList.add('animacion-entrar');
+                setTimeout(avanzarSala, 600);
+            }
+        }
+
+        // --- MECÁNICA: PUZZLE DE INGENIERÍA ---
+        function generarPuzzle() {
+            estadoSala = 'puzzle';
+            document.getElementById('puerta-centro').classList.add('oculto');
+            document.getElementById('puertas-duo').classList.remove('oculto');
+
+            const pMala = document.getElementById('texto-puerta-mala');
+            const pBuena = document.getElementById('texto-puerta-buena');
+
+            // Dependiendo del nivel, lanza diferentes trampas. 
+            // Aquí referenciamos el clásico problema de Álgebra Lineal.
+            if (sala <= 4) {
+                pMala.innerText = "SISTEMA: Resolver Matriz Directamente";
+                pBuena.innerText = "SISTEMA: Trasponer Matriz Primero";
+                window.msgErrorPuzzle = "¡Anomalía detectada! A ti te enseñaron a trasponer la matriz primero antes de resolver. El sistema de seguridad te electrocutó.";
+            } else {
+                pMala.innerText = "LÍQUIDO: Fuerzas de Dispersión";
+                pBuena.innerText = "LÍQUIDO: Puentes de Hidrógeno";
+                window.msgErrorPuzzle = "Presión inestable. El líquido requería fuerzas intermoleculares más fuertes (Puentes de Hidrógeno).";
+            }
+
+            // Aleatorizar el lado de la puerta correcta (50/50)
+            if (Math.random() > 0.5) {
+                let temp = pMala.innerText;
+                pMala.innerText = pBuena.innerText;
+                pBuena.innerText = temp;
+                document.getElementById('puertas-duo').children[0].setAttribute('onclick', 'abrirPuertaPuzzle(true)');
+                document.getElementById('puertas-duo').children[1].setAttribute('onclick', 'abrirPuertaPuzzle(false)');
+            } else {
+                document.getElementById('puertas-duo').children[0].setAttribute('onclick', 'abrirPuertaPuzzle(false)');
+                document.getElementById('puertas-duo').children[1].setAttribute('onclick', 'abrirPuertaPuzzle(true)');
+            }
+        }
+
+        function abrirPuertaPuzzle(esCorrecta) {
+            if (esCorrecta) {
+                // Avanza
+                avanzarSala();
+            } else {
+                // Trampa activada
+                recibirDaño(35, window.msgErrorPuzzle);
+                if (vida > 0) {
+                    avanzarSala(); // Te deja pasar pero muy lastimado
+                }
             }
         }
     </script>
