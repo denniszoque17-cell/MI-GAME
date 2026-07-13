@@ -3,327 +3,395 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escape Room - 3D Engine</title>
+    <title>Crowlning Skills - Escape Room 2D</title>
     <style>
-        /* --- ESTILOS GENERALES Y MODO OSCURO --- */
+        /* --- ESTILOS GENERALES --- */
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #000; color: #fff;
-            font-family: Arial, sans-serif;
-            overflow: hidden; touch-action: none; /* Evita que la pantalla se mueva */
+            background-color: #000000; color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden; touch-action: none;
         }
         .oculto { display: none !important; }
 
-        /* --- PANTALLA DE INICIO (HOME) --- */
+        /* --- PANTALLA PRINCIPAL (HOME) --- */
         #pantalla-inicio {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background-color: #050505; z-index: 1000;
+            background-color: #000000; z-index: 1000;
         }
-        .imagen-fondo { width: 100%; max-width: 300px; margin-bottom: 30px; filter: drop-shadow(0 0 15px #a855f7); }
+        .imagen-fondo { width: 100%; max-width: 320px; height: auto; margin-bottom: 40px; }
         .boton-ingresar {
             background-color: transparent; color: #a855f7; border: 2px solid #a855f7;
-            padding: 15px 50px; font-size: 20px; font-weight: bold; cursor: pointer;
-            border-radius: 30px; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); text-transform: uppercase;
+            padding: 15px 50px; font-size: 20px; font-weight: bold; letter-spacing: 2px;
+            cursor: pointer; border-radius: 30px; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+            text-transform: uppercase; transition: 0.2s;
         }
 
-        /* --- MOTOR 3D (CSS) --- */
-        #contenedor-3d {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            perspective: 600px; /* Profundidad del 3D */
-            overflow: hidden;
-        }
-        #camara {
-            position: absolute; width: 100%; height: 100%;
-            transform-style: preserve-3d;
-            transition: transform 0.1s linear;
-        }
-        #mundo {
-            position: absolute; top: 50%; left: 50%;
-            transform-style: preserve-3d;
-        }
-
-        /* --- LAS PAREDES DEL CUARTO --- */
-        .textura {
-            position: absolute;
-            box-sizing: border-box;
-            border: 2px solid #222;
-            background: url('https://www.transparenttextures.com/patterns/dark-matter.png'), #111;
-            box-shadow: inset 0 0 100px #000; /* Efecto de oscuridad en las esquinas */
-        }
-        /* Definimos un cuarto de 1000x1000 y 500 de alto */
-        #piso { width: 1000px; height: 1000px; transform: translate3d(-500px, 250px, -500px) rotateX(90deg); background: #0a0a0a; border: 1px solid #333; }
-        #techo { width: 1000px; height: 1000px; transform: translate3d(-500px, -250px, -500px) rotateX(-90deg); background: #050505; }
-        #pared-norte { width: 1000px; height: 500px; transform: translate3d(-500px, -250px, -1000px) rotateY(0deg); }
-        #pared-sur { width: 1000px; height: 500px; transform: translate3d(-500px, -250px, 0px) rotateY(180deg); }
-        #pared-este { width: 1000px; height: 500px; transform: translate3d(500px, -250px, -500px) rotateY(-90deg); }
-        #pared-oeste { width: 1000px; height: 500px; transform: translate3d(-500px, -250px, -500px) rotateY(90deg); }
-
-        /* --- OBJETOS INTERACTIVOS (LA PUERTA) --- */
-        #puerta-salida {
-            position: absolute; width: 200px; height: 350px;
-            background: #2a1c12; border: 8px solid #000;
-            transform: translate3d(-100px, -100px, -998px); /* Pegada a la pared norte */
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 0 50px rgba(168,85,247,0.2);
-        }
-        #puerta-salida::after { content: "PUERTA 01"; color: #a855f7; font-weight: bold; position: absolute; top: 20px; }
-        .manija { position: absolute; right: 20px; width: 15px; height: 40px; background: #555; }
-
-        #cartel-pista {
-            position: absolute; width: 300px; height: 150px; background: #ddd; color: #000;
-            transform: translate3d(498px, -50px, -650px) rotateY(-90deg); /* Pegado a pared este */
-            padding: 20px; box-sizing: border-box; font-weight: bold; font-size: 18px; text-align: center;
-        }
-
-        /* --- INTERFAZ DE JUEGO Y JOYSTICK --- */
-        #ui-juego {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; /* Para que los toques pasen a la cámara de abajo */
-            z-index: 100;
-        }
-        .mira {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 10px; height: 10px; background: rgba(255,255,255,0.5); border-radius: 50%;
+        /* --- INTERFAZ DEL JUEGO --- */
+        #contenedor-juego {
+            width: 100%; height: 100%; display: flex; flex-direction: column;
         }
         
-        /* Joystick Base */
-        #joystick-zona {
-            position: absolute; bottom: 30px; left: 30px;
-            width: 120px; height: 120px; background: rgba(255,255,255,0.1);
-            border-radius: 50%; pointer-events: auto; /* Activa el toque aquí */
+        /* Contenedor del mapa (60% del alto) */
+        #zona-render {
+            position: relative; width: 100%; height: 55%; background-color: #0c0c0c;
+            border-bottom: 2px solid #222; box-sizing: border-box;
+        }
+        canvas { width: 100%; height: 100%; display: block; }
+
+        /* Contenedor de controles e información (45% del alto) */
+        #zona-controles {
+            width: 100%; height: 45%; background-color: #050505;
+            display: flex; position: relative; box-sizing: border-box; padding: 10px;
+        }
+
+        /* Panel Izquierdo: Mensajes e Inventario */
+        .panel-info {
+            width: 55%; height: 100%; display: flex; flex-direction: column;
+            justify-content: space-between; padding-right: 10px; box-sizing: border-box;
+        }
+        .consola-texto {
+            background: #000; border: 1px solid #333; color: #aaa;
+            padding: 8px; font-size: 11px; height: 75%; overflow-y: auto; text-align: left;
+        }
+        .inventario { color: #a855f7; font-size: 12px; font-weight: bold; text-align: left; }
+
+        /* Panel Derecho: Joystick Virtual */
+        .panel-joystick {
+            width: 45%; height: 100%; display: flex; align-items: center; justify-content: center;
+        }
+        #joystick-base {
+            width: 110px; height: 110px; background: rgba(255,255,255,0.05);
+            border: 2px solid #333; border-radius: 50%; position: relative;
         }
         #joystick-palanca {
-            position: absolute; top: 35px; left: 35px;
-            width: 50px; height: 50px; background: rgba(168,85,247,0.6);
-            border-radius: 50%; box-shadow: 0 0 10px #a855f7;
-        }
-        
-        #btn-interactuar {
-            position: absolute; bottom: 40px; right: 40px;
-            width: 80px; height: 80px; background: rgba(0,0,0,0.5);
-            border: 2px solid #a855f7; color: #a855f7; border-radius: 50%;
-            font-weight: bold; pointer-events: auto; display: none;
+            width: 45px; height: 45px; background: #a855f7; border-radius: 50%;
+            position: absolute; top: 32px; left: 32px; box-shadow: 0 0 10px #a855f7;
         }
 
-        /* --- POPUPS DE MENSAJES Y PUZZLES --- */
+        /* --- POPUPS DE INTERACCIÓN / PUZZLES --- */
         .popup {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 85%; max-width: 350px; background: #111; border: 2px solid #a855f7;
-            padding: 20px; text-align: center; pointer-events: auto; z-index: 200;
+            width: 85%; max-width: 360px; background: #111; border: 2px solid #a855f7;
+            padding: 20px; text-align: center; box-sizing: border-box; z-index: 500;
+            box-shadow: 0 0 25px rgba(0,0,0,0.9);
         }
         .btn-opcion {
             background: #222; color: #fff; border: 1px solid #555;
-            padding: 15px; margin: 5px 0; width: 100%; cursor: pointer;
+            padding: 12px; margin: 6px 0; width: 100%; cursor: pointer; font-family: monospace;
         }
         .btn-opcion:active { background: #a855f7; color: #000; }
-        
-        /* Efecto de daño */
-        @keyframes daño { 0% { box-shadow: inset 0 0 100px red; } 100% { box-shadow: none; } }
-        .pantalla-roja { animation: daño 0.5s; }
+
+        /* Efecto visual de daño */
+        @keyframes flashRojo { 0% { background: rgba(255,0,0,0.4); } 100% { background: transparent; } }
+        .daño-flash { animation: flashRojo 0.4s ease-out; }
     </style>
 </head>
 <body>
 
     <div id="pantalla-inicio">
-        <img src="logo.jpg" alt="Logo" class="imagen-fondo">
-        <button class="boton-ingresar" onclick="iniciarJuego()">JUGAR</button>
+        <img src="logo.jpg" alt="Crowlning Skills Logo" class="imagen-fondo">
+        <button class="boton-ingresar" onclick="comenzarSimulador()">INGRESAR</button>
     </div>
 
-    <div id="contenedor-3d" class="oculto">
-        <div id="camara">
-            <div id="mundo">
-                <div id="piso" class="textura"></div>
-                <div id="techo" class="textura"></div>
-                <div id="pared-norte" class="textura"></div>
-                <div id="pared-sur" class="textura"></div>
-                <div id="pared-este" class="textura"></div>
-                <div id="pared-oeste" class="textura"></div>
-                
-                <div id="puerta-salida" onclick="abrirPuzzle()">
-                    <div class="manija"></div>
-                </div>
-                <div id="cartel-pista">
-                    PISTA DE SEGURIDAD:<br><br>El sistema de matrices es LD. Un mal paso destruirá la sala.
+    <div id="contenedor-juego" class="oculto">
+        
+        <div id="zona-render">
+            <div id="efecto-daño" style="position:absolute; width:100%; height:100%; pointer-events:none; z-index:10;"></div>
+            <canvas id="canvasJuego"></canvas>
+        </div>
+
+        <div id="zona-controles">
+            
+            <div class="panel-info">
+                <div class="inventario">Fragmentos: <span id="txt-piezas">0</span> / 3</div>
+                <div class="consola-texto" id="consola-txt">
+                    > SISTEMA INICIADO.<br>
+                    > Explora el cuarto con el joystick.<br>
+                    > Inspecciona los escritorios grises chocando contra ellos para hallar pistas.
                 </div>
             </div>
+
+            <div class="panel-joystick">
+                <div id="joystick-base">
+                    <div id="joystick-palanca"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div id="ui-juego" class="oculto">
-        <div class="mira"></div>
-        <div id="pantalla-daño" style="position:absolute; width:100%; height:100%;"></div>
-        
-        <div id="joystick-zona">
-            <div id="joystick-palanca"></div>
-        </div>
-        
-        <div id="popup-puzzle" class="popup oculto">
-            <h3 style="color:#a855f7;">HACKEO DE PUERTA</h3>
-            <p>La consola exige estabilizar la matriz del sistema. ¿Cuál es el procedimiento estricto enseñado en la EPN?</p>
-            <button class="btn-opcion" onclick="verificarRespuesta(false)">A) Calcular determinante directamente</button>
-            <button class="btn-opcion" onclick="verificarRespuesta(true)">B) Trasponer la matriz primero</button>
-        </div>
-        
-        <div id="popup-victoria" class="popup oculto">
-            <h2 style="color:#4CAF50;">¡PUERTA ABIERTA!</h2>
-            <p>El procedimiento fue correcto. Has sobrevivido a este nivel.</p>
-            <button class="btn-opcion" onclick="location.reload()">VOLVER AL HOME</button>
-        </div>
+    <div id="popup-puzzle" class="popup oculto">
+        <h3 style="color:#a855f7; margin-top:0;" id="puzzle-titulo">Cierre de Seguridad</h3>
+        <p id="puzzle-desc" style="font-size:13px; line-height:1.4;"></p>
+        <div id="contenedor-opciones"></div>
     </div>
 
     <script>
-        // VARIABLES DEL JUEGO
-        let camX = 0, camZ = 0; // Posición del jugador (Empieza en el centro del cuarto)
-        let rotX = 0, rotY = 0; // Rotación de la cámara (Mirar arriba/abajo, izquierda/derecha)
+        // CONFIGURACIÓN DEL MOTOR DE JUEGO
+        const canvas = document.getElementById('canvasJuego');
+        const ctx = canvas.getContext('2d');
         
-        // Variables del Joystick
-        let joyActivo = false;
-        let moveX = 0, moveZ = 0;
-        let velocidad = 8;
-        
-        // Elementos DOM
-        const mundo = document.getElementById('mundo');
-        const camara = document.getElementById('camara');
-        const joyZona = document.getElementById('joystick-zona');
-        const joyPalanca = document.getElementById('joystick-palanca');
-        const cont3D = document.getElementById('contenedor-3d');
+        let juegoActivo = false;
+        let piezas = 0;
+        let panelAbierto = false;
 
-        function iniciarJuego() {
+        // Entidades físicas del mapa
+        const jugador = { x: 50, y: 120, radio: 12, velocidad: 4, vx: 0, vy: 0 };
+        
+        // Elementos interactivos del cuarto (coordenadas adaptativas)
+        let objetos = [];
+
+        function inicializarObjetos() {
+            objetos = [
+                { x: 140, y: 40, w: 45, h: 45, tipo: 'escritorio', revisado: false, titulo: "Mesa de Redacción", texto: "Encontraste un fragmento de COE: 'La ambigüedad destruye la dirección técnica. Claridad ante todo.'" },
+                { x: 60, y: 180, w: 45, h: 45, tipo: 'escritorio', revisado: false, titulo: "Terminal de Datos", texto: "Encontraste un fragmento de Álgebra: 'El sistema analizado es Linealmente Dependiente (LD). Se requiere precaución.'" },
+                { x: 240, y: 160, w: 45, h: 45, tipo: 'escritorio', revisado: false, titulo: "Casillero Químico", texto: "Encontraste un fragmento de Laboratorio: 'Compuestos estables requieren enlaces de Puentes de Hidrógeno activos.'" },
+                { x: canvas.width - 35, y: canvas.height / 2 - 35, w: 25, h: 70, tipo: 'puerta', titulo: "Puerta de Salida" }
+            ];
+        }
+
+        // Redimensionar el área de juego
+        function ajustarPantalla() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            inicializarObjetos();
+        }
+        window.addEventListener('resize', ajustarPantalla);
+
+        function comenzarSimulador() {
             document.getElementById('pantalla-inicio').classList.add('oculto');
-            cont3D.classList.remove('oculto');
-            document.getElementById('ui-juego').classList.remove('oculto');
-            actualizarCamara();
-            gameLoop();
+            document.getElementById('contenedor-juego').classList.remove('oculto');
+            ajustarPantalla();
+            juegoActivo = true;
+             loopPrincipal();
         }
 
-        /* --- LÓGICA DE CÁMARA (MIRAR ALREDEDOR CON EL DEDO) --- */
-        let touchStartX = 0, touchStartY = 0;
-        
-        cont3D.addEventListener('touchstart', (e) => {
-            // Solo toma el toque si NO es en el joystick
-            if (e.target.id !== 'joystick-zona' && e.target.id !== 'joystick-palanca') {
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-            }
-        });
+        /* ===================================================
+           LÓGICA DEL JOYSTICK UNIVERSAL (POINTER EVENTS)
+           =================================================== */
+        const joyBase = document.getElementById('joystick-base');
+        const joyPalanca = document.getElementById('joystick-palanca');
+        let joyActivo = false;
+        let joyCentroX = 0, joyCentroY = 0;
 
-        cont3D.addEventListener('touchmove', (e) => {
-            if (e.target.id !== 'joystick-zona' && e.target.id !== 'joystick-palanca') {
-                let deltaX = e.touches[0].clientX - touchStartX;
-                let deltaY = e.touches[0].clientY - touchStartY;
-                
-                rotY -= deltaX * 0.3; // Sensibilidad horizontal
-                rotX += deltaY * 0.3; // Sensibilidad vertical
-                
-                // Limitar la vista arriba/abajo
-                if (rotX > 60) rotX = 60;
-                if (rotX < -60) rotX = -60;
-                
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-                actualizarCamara();
-            }
-        });
-
-        /* --- LÓGICA DEL JOYSTICK (CAMINAR) --- */
-        let joyCenterX, joyCenterY;
-
-        joyZona.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+        joyBase.addEventListener('pointerdown', (e) => {
             joyActivo = true;
-            let rect = joyZona.getBoundingClientRect();
-            joyCenterX = rect.left + rect.width / 2;
-            joyCenterY = rect.top + rect.height / 2;
-            actualizarJoystick(e.touches[0]);
-        }, {passive: false});
-
-        joyZona.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            if (joyActivo) actualizarJoystick(e.touches[0]);
-        }, {passive: false});
-
-        joyZona.addEventListener('touchend', () => {
-            joyActivo = false;
-            joyPalanca.style.transform = `translate(0px, 0px)`;
-            moveX = 0; moveZ = 0;
+            joyBase.setPointerCapture(e.pointerId);
+            const rect = joyBase.getBoundingClientRect();
+            joyCentroX = rect.left + rect.width / 2;
+            joyCentroY = rect.top + rect.height / 2;
+            procesarMovimientoJoystick(e);
         });
 
-        function actualizarJoystick(touch) {
-            let dx = touch.clientX - joyCenterX;
-            let dy = touch.clientY - joyCenterY;
+        joyBase.addEventListener('pointermove', (e) => {
+            if (joyActivo) procesarMovimientoJoystick(e);
+        });
+
+        joyBase.addEventListener('pointerup', (e) => {
+            joyActivo = false;
+            joyPalanca.style.transform = 'translate(0px, 0px)';
+            jugador.vx = 0; jugador.vy = 0;
+        });
+
+        function procesarMovimientoJoystick(e) {
+            if (panelAbierto) return;
             
-            // Limitar la palanca dentro del círculo
+            let dx = e.clientX - joyCentroX;
+            let dy = e.clientY - joyCentroY;
             let distancia = Math.sqrt(dx*dx + dy*dy);
-            let maxDist = 35; // Radio de movimiento
-            if (distancia > maxDist) {
-                dx = (dx / distancia) * maxDist;
-                dy = (dy / distancia) * maxDist;
+            const radioMax = 33; // Límite físico de la palanca
+
+            if (distancia > radioMax) {
+                dx = (dx / distancia) * radioMax;
+                dy = (dy / distancia) * radioMax;
             }
-            
+
             joyPalanca.style.transform = `translate(${dx}px, ${dy}px)`;
+
+            // Convertir a vector de velocidad del jugador
+            jugador.vx = (dx / radioMax) * jugador.velocidad;
+            jugador.vy = (dy / radioMax) * jugador.velocidad;
+        }
+
+        /* ===================================================
+           COLISIONES Y MOTOR FÍSICO
+           =================================================== */
+        function detectarColisiones() {
+            // Límites del cuarto físico
+            if (jugador.x - jugador.radio < 0) jugador.x = jugador.radio;
+            if (jugador.x + jugador.radio > canvas.width) jugador.x = canvas.width - jugador.radio;
+            if (jugador.y - jugador.radio < 0) jugador.y = jugador.radio;
+            if (jugador.y + jugador.radio > canvas.height) jugador.y = canvas.height - jugador.radio;
+
+            // Chocar contra muebles/puertas
+            for (let obj of objetos) {
+                // Encontrar punto más cercano del mueble al jugador redondo
+                let cercaX = Math.max(obj.x, Math.min(jugador.x, obj.x + obj.w));
+                let cercaY = Math.max(obj.y, Math.min(jugador.y, obj.y + obj.h));
+                
+                let distX = jugador.x - cercaX;
+                let distY = jugador.y - cercaY;
+                let distancia = Math.sqrt(distX*distX + distY*distY);
+
+                if (distancia < jugador.radio) {
+                    // Rebotar al jugador para que no traspase el mueble
+                    if (Math.abs(distX) > Math.abs(distY)) {
+                        jugador.x = cercaX + (distX > 0 ? jugador.radio : -jugador.radio);
+                    } else {
+                        jugador.y = cercaY + (distY > 0 ? jugador.radio : -jugador.radio);
+                    }
+                    
+                    // Activar la inspección del mueble
+                    dispararInteraccion(obj);
+                }
+            }
+        }
+
+        function dispararInteraccion(obj) {
+            if (panelAbierto) return;
+
+            if (obj.tipo === 'escritorio' && !obj.revisado) {
+                obj.revisado = true;
+                piezas++;
+                document.getElementById('txt-piezas').innerText = piezas;
+                logConsola(`> Revisando: ${obj.titulo}.`);
+                abrirPopupInformativo(obj.titulo, obj.texto);
+            } 
+            else if (obj.tipo === 'puerta') {
+                if (piezas < 3) {
+                    abrirPopupInformativo("Puerta Bloqueada", "El lector requiere los 3 fragmentos de análisis distribuidos en los escritorios.");
+                } else {
+                    lanzarQuizFinal();
+                }
+            }
+        }
+
+        /* ===================================================
+           SISTEMA DE POPUPS Y LÓGICA DE JUEGO (PERSPECTIVA)
+           =================================================== */
+        const panelPopup = document.getElementById('popup-puzzle');
+        const txtConsola = document.getElementById('consola-txt');
+
+        function logConsola(msg) {
+            txtConsola.innerHTML += `<br>${msg}`;
+            txtConsola.scrollTop = txtConsola.scrollHeight;
+        }
+
+        function abrirPopupInformativo(titulo, desc) {
+            panelAbierto = true;
+            jugador.vx = 0; jugador.vy = 0;
             
-            // Normalizar valores para el movimiento (-1 a 1)
-            moveX = dx / maxDist;
-            moveZ = dy / maxDist; // dy negativo es hacia arriba en pantalla, osea caminar adelante
+            document.getElementById('puzzle-titulo').innerText = titulo;
+            document.getElementById('puzzle-desc').innerText = desc;
+            
+            const opcionesDiv = document.getElementById('contenedor-opciones');
+            opcionesDiv.innerHTML = `<button class="btn-opcion" onclick="cerrarPopup()">CONTINUAR EXPLORACIÓN</button>`;
+            panelPopup.classList.remove('oculto');
         }
 
-        /* --- MOTOR DE MOVIMIENTO --- */
-        function gameLoop() {
-            if (joyActivo) {
-                // Calcular la dirección basada en hacia dónde mira la cámara (rotY)
-                let angleRad = rotY * (Math.PI / 180);
-                
-                // Mover adelante/atrás (Eje Z del joystick)
-                let dirZ_X = Math.sin(angleRad) * moveZ * velocidad;
-                let dirZ_Z = Math.cos(angleRad) * moveZ * velocidad;
-                
-                // Mover lados (Eje X del joystick)
-                let dirX_X = Math.cos(angleRad) * moveX * velocidad;
-                let dirX_Z = -Math.sin(angleRad) * moveX * velocidad;
-
-                let nextX = camX - dirZ_X - dirX_X;
-                let nextZ = camZ + dirZ_Z + dirX_Z;
-
-                // Colisiones Básicas (Los bordes del cuarto son a 450px para no atravesar paredes)
-                if (nextX > -450 && nextX < 450) camX = nextX;
-                if (nextZ > -950 && nextZ < -50) camZ = nextZ; // El centro del cuarto está en Z=-500
-
-                actualizarCamara();
-            }
-            requestAnimationFrame(gameLoop);
+        function cerrarPopup() {
+            panelPopup.classList.add('oculto');
+            setTimeout(() => { panelAbierto = false; }, 200);
         }
 
-        function actualizarCamara() {
-            // Movemos el MUNDO en dirección opuesta a la cámara
-            mundo.style.transform = `translate3d(${-camX}px, 0px, ${-camZ}px)`;
-            // Rotamos la CÁMARA
-            camara.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+        function lanzarQuizFinal() {
+            panelAbierto = true;
+            jugador.vx = 0; jugador.vy = 0;
+            
+            document.getElementById('puzzle-titulo').innerText = "Análisis de Matrices EPN";
+            document.getElementById('puzzle-desc').innerText = "Los fragmentos revelan una matriz central Linealmente Dependiente (LD) en los servidores. ¿Cuál es el procedimiento que te enseñaron para resolverla de forma segura?";
+            
+            const opcionesDiv = document.getElementById('contenedor-opciones');
+            opcionesDiv.innerHTML = `
+                <button class="btn-opcion" onclick="procesarRespuesta(false)">A) Calcular el determinante de forma directa</button>
+                <button class="btn-opcion" onclick="procesarRespuesta(true)">B) Trasponer la matriz primero</button>
+            `;
+            panelPopup.classList.remove('oculto');
         }
 
-        /* --- INTERACCIÓN Y PUZZLES --- */
-        function abrirPuzzle() {
-            // Verifica que el jugador esté cerca de la puerta (La puerta está en Z=-1000)
-            if (camZ < -700) {
-                document.getElementById('popup-puzzle').classList.remove('oculto');
-                joyActivo = false; // Detener movimiento
+        function procesarRespuesta(esCorrecta) {
+            if (esCorrecta) {
+                document.getElementById('puzzle-titulo').innerText = "SISTEMA DESBLOQUEADO";
+                document.getElementById('puzzle-desc').innerText = "Excelente decisión. La trasposición estabilizó los parámetros. Has superado el simulador de Escape Room con éxito.";
+                document.getElementById('contenedor-opciones').innerHTML = `<button class="btn-opcion" onclick="location.reload()">VOLVER AL INICIO</button>`;
             } else {
-                alert("Acércate más a la puerta para inspeccionarla.");
+                // Efecto visual de daño
+                const flash = document.getElementById('efecto-daño');
+                flash.classList.remove('daño-flash');
+                void flash.offsetWidth;
+                flash.classList.add('daño-flash');
+                
+                logConsola("> ERROR: El sistema colapsó por omitir la trasposición.");
+                document.getElementById('puzzle-titulo').innerText = "FALLA CRÍTICA";
+                document.getElementById('puzzle-desc').innerText = "¡Incidente provocado! Saltarse el procedimiento causó un bucle infinito en el núcleo de datos.";
+                document.getElementById('contenedor-opciones').innerHTML = `<button class="btn-opcion" onclick="location.reload()">REINICIAR CUARTO</button>`;
             }
         }
 
-        function verificarRespuesta(correcta) {
-            document.getElementById('popup-puzzle').classList.add('oculto');
-            if (correcta) {
-                document.getElementById('popup-victoria').classList.remove('oculto');
-            } else {
-                const pantallaDaño = document.getElementById('pantalla-daño');
-                pantallaDaño.classList.remove('pantalla-roja');
-                void pantallaDaño.offsetWidth; // Reiniciar animación
-                pantallaDaño.classList.add('pantalla-roja');
-                alert("¡ERROR! Resolviste sin trasponer. El sistema colapsó.");
+        /* ===================================================
+           BUCLE DE RENDERIZADO (GRÁFICOS)
+           =================================================== */
+        function loopPrincipal() {
+            if (!juegoActivo) return;
+
+            // Actualizar posiciones si el juego no está pausado por un popup
+            if (!panelAbierto) {
+                jugador.x += jugador.vx;
+                jugador.y += jugador.vy;
+                detectarColisiones();
             }
+
+            // LIMPIAR LIENZO
+            ctx.fillStyle = '#09090b';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // DIBUJAR ENTORNO (Líneas de rejilla tipo radar/búnker)
+            ctx.strokeStyle = '#111115';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=30) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for(let j=0; j<canvas.height; j+=30) {
+                ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
+            }
+
+            // DIBUJAR MUEBLES (Habitaciones físicas)
+            for (let obj of objetos) {
+                if (obj.tipo === 'escritorio') {
+                    ctx.fillStyle = obj.revisado ? '#222226' : '#3f3f46';
+                    ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+                    ctx.strokeStyle = obj.revisado ? '#444' : '#a855f7';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(obj.x, obj.y, obj.w, obj.h);
+                    
+                    // Detalle interno de los escritorios
+                    ctx.fillStyle = '#18181b';
+                    ctx.fillRect(obj.x + 5, obj.y + 5, obj.w - 10, obj.h - 10);
+                } 
+                else if (obj.tipo === 'puerta') {
+                    ctx.fillStyle = (piezas === 3) ? '#a855f7' : '#27272a';
+                    ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+                    ctx.strokeStyle = '#000000';
+                    ctx.strokeRect(obj.x, obj.y, obj.w, obj.h);
+                }
+            }
+
+            // DIBUJAR PERSONAJE (Círculo blanco con núcleo morado)
+            ctx.beginPath();
+            ctx.arc(jugador.x, jugador.y, jugador.radio, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.closePath();
+            
+            ctx.beginPath();
+            ctx.arc(jugador.x, jugador.y, jugador.radio - 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#a855f7';
+            ctx.fill();
+            ctx.closePath();
+
+            requestAnimationFrame(loopPrincipal);
         }
     </script>
 </body>
