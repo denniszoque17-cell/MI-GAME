@@ -99,6 +99,36 @@
         .oculto {
             display: none !important;
         }
+        /* --- ANIMACIONES DE CARGA --- */
+        @keyframes girar {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes parpadear {
+            from { opacity: 1; }
+            to { opacity: 0.3; }
+        }
+        .loading-container {
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .cargando-logo {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2px solid #a855f7;
+            animation: girar 2s linear infinite; /* Hace girar el logo */
+        }
+        .loading-texto {
+            color: #a855f7;
+            font-size: 16px;
+            margin-top: 15px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            animation: parpadear 1s infinite alternate; /* Efecto titilante */
+        }
     </style>
 </head>
 <body>
@@ -108,61 +138,91 @@
         <button class="boton-ingresar" onclick="cambiarPantalla('inicio', 'menu')">INGRESAR</button>
     </div>
 
+ <!-- 2. PANTALLA DE MENÚ -->
     <div id="menu" class="pantalla oculto">
         <p class="texto-escape">Simulador de EscapeRoom que pone a prueba al estudiante con problemas de razonamiento lógico en un tiempo determinado.</p>
         
         <h3>Elija el modo de juego</h3>
         
-        <button class="boton-juego" onclick="cambiarPantalla('menu', 'juego1')">Código de Evacuación</button>
-        <button class="boton-juego" onclick="cambiarPantalla('menu', 'juego2')">Reacción en Cadena</button>
-        <button class="boton-juego" onclick="cambiarPantalla('menu', 'juego3')">Colapso del Servidor</button>
-        <button class="boton-juego" onclick="cambiarPantalla('menu', 'juego4')">a Bóveda del Inversor</button>
-        <button class="boton-juego" onclick="cambiarPantalla('menu', 'juego5')">El Último Dilema</button>
+        <!-- Botones con los nombres oficiales y llamando a la nueva función -->
+        <button class="boton-juego" onclick="iniciarJuego('juego1')">1. Código de Evacuación</button>
+        <button class="boton-juego" onclick="iniciarJuego('juego2')">2. Reacción en Cadena</button>
+        <button class="boton-juego" onclick="iniciarJuego('juego3')">3. Colapso del Servidor</button>
+        <button class="boton-juego" onclick="iniciarJuego('juego4')">4. La Bóveda del Inversor</button>
+        <button class="boton-juego" onclick="iniciarJuego('juego5')">5. El Último Dilema</button>
         
         <button class="boton-volver" onclick="cambiarPantalla('menu', 'inicio')">Volver al Inicio</button>
     </div>
 
+    <!-- 3. PANTALLAS DE CADA JUEGO (Con Textos y Animación) -->
     <div id="juego1" class="pantalla oculto">
-        <h2>Modo 1</h2>
-        <p>Estás atrapado en un laboratorio sellado. El manual para abrir la puerta de emergencia está redactado de forma terrible, lleno de ambigüedades. 
-        Tienes 60 segundos para encontrar el error de sintaxis en el documento y escribir la instrucción clara que el escáner de la puerta necesita para abrirse antes de que el cuarto se quede sin oxígeno.</p>
-        <button class="boton-volver" onclick="cambiarPantalla('juego1', 'menu')">Volver al Menú</button>
+        <h2>Código de Evacuación</h2>
+        <p class="texto-escape">Estás atrapado en un laboratorio sellado. Encuentra el error de sintaxis en el manual y redacta una instrucción clara para el escáner antes de quedarte sin oxígeno.</p>
+        <div class="loading-container">
+            <img src="logo.jpg" class="cargando-logo" alt="Cargando">
+            <div class="loading-texto">LOADING...</div>
+        </div>
     </div>
 
     <div id="juego2" class="pantalla oculto">
-        <h2>Modo 2</h2>
-        <p>Hay una fuga de un líquido inestable (con fuerzas intermoleculares peligrosas) en el sector B. Un compañero está al otro lado de la puerta de cristal blindado, pero entró en pánico y no quiere presionar el botón de purga.
-        No puedes usar la lógica matemática para convencerlo porque está asustado. Debes elegir rápidamente las opciones de diálogo correctas para mostrar empatía, calmarlo y persuadirlo de que te dé la clave de acceso.</p>
-        <button class="boton-volver" onclick="cambiarPantalla('juego2', 'menu')">Volver al Menú</button>
+        <h2>Reacción en Cadena</h2>
+        <p class="texto-escape">Hay una fuga química. Tu compañero está en pánico al otro lado del cristal. Usa la empatía para convencerlo de que presione la purga de seguridad.</p>
+        <div class="loading-container">
+            <img src="logo.jpg" class="cargando-logo" alt="Cargando">
+            <div class="loading-texto">LOADING...</div>
+        </div>
     </div>
 
     <div id="juego3" class="pantalla oculto">
-        <h2>Modo 3</h2>
-        <p>La red principal está a punto de caer. Tienes a tres técnicos comunicándose contigo por radio, pero están discutiendo entre ellos echándose la culpa y nadie hace nada.
-        El tiempo corre. Tienes que leer la situación, mediar en el conflicto mediante tus respuestas y coordinar a los tres (como si estuvieras alineando un sistema de ecuaciones) para que bajen las palancas en el orden correcto.</p>
-        <button class="boton-volver" onclick="cambiarPantalla('juego3', 'menu')">Volver al Menú</button>
+        <h2>Colapso del Servidor</h2>
+        <p class="texto-escape">La red principal va a caer. Tienes a tres técnicos discutiendo por radio. Media en el conflicto y coordínalos antes del colapso total.</p>
+        <div class="loading-container">
+            <img src="logo.jpg" class="cargando-logo" alt="Cargando">
+            <div class="loading-texto">LOADING...</div>
+        </div>
     </div>
 
     <div id="juego4" class="pantalla oculto">
-        <h2>Modo 4</h2>
-        <p>La penúltima puerta está bloqueada por una Inteligencia Artificial diseñada por el CEO de la empresa. Para dejarte pasar, la IA te lanza objeciones destructivas sobre un proyecto de ingeniería.]
-        Tienes que armar un "Elevator Pitch" rápido. Si respondes solo con jerga técnica y números, la IA te bloquea. Debes elegir las frases que defiendan el impacto y el valor real del proyecto para abrir la bóveda.</p>
-        <button class="boton-volver" onclick="cambiarPantalla('juego4', 'menu')">Volver al Menú</button>
+        <h2>La Bóveda del Inversor</h2>
+        <p class="texto-escape">Una IA bloquea la puerta. Debes armar un pitch persuasivo. Si usas pura jerga técnica y números, la bóveda se bloqueará para siempre.</p>
+        <div class="loading-container">
+            <img src="logo.jpg" class="cargando-logo" alt="Cargando">
+            <div class="loading-texto">LOADING...</div>
+        </div>
     </div>
 
     <div id="juego5" class="pantalla oculto">
-        <h2>Modo 5</h2>
-        <p>Llegaste a la sala de control final. Tienes que introducir la llave maestra, pero al hacerlo, debes decidir si desviar la energía a los soportes vitales (salvando datos) o a las puertas (salvando el equipo físico), perdiendo algo en el proceso.
-        No hay una fórmula matemática para esto. Debes analizar unas notas y correos electrónicos rotos esparcidos por la habitación (pistas) para tomar una decisión crítica basándote en la ética profesional antes de que el reloj llegue a cero.</p>
-        <button class="boton-volver" onclick="cambiarPantalla('juego5', 'menu')">Volver al Menú</button>
+        <h2>El Último Dilema</h2>
+        <p class="texto-escape">Llegaste al final. Debes decidir si desviar energía para salvar datos críticos o salvar la estructura. Usa tu ética profesional.</p>
+        <div class="loading-container">
+            <img src="logo.jpg" class="cargando-logo" alt="Cargando">
+            <div class="loading-texto">LOADING...</div>
+        </div>
     </div>
 
+    <!-- 4. PANTALLA FINAL -->
+    <div id="pantalla-final" class="pantalla oculto">
+        <h2 style="color: #a855f7;">¡Tiempo Agotado!</h2>
+        <p class="texto-escape">La misión ha finalizado. La Escuela Politécnica Nacional necesita ingenieros capaces de liderar en crisis reales.</p>
+        <button class="boton-volver" onclick="cambiarPantalla('pantalla-final', 'inicio')">Volver al Inicio</button>
+    </div>
+
+    <!-- SCRIPT DE LÓGICA Y TIEMPO -->
     <script>
         function cambiarPantalla(pantallaActual, pantallaNueva) {
             document.getElementById(pantallaActual).classList.add('oculto');
             document.getElementById(pantallaNueva).classList.remove('oculto');
         }
-    </script>
 
-</body>
+        // Esta función arranca al elegir un juego
+        function iniciarJuego(juegoId) {
+            cambiarPantalla('menu', juegoId); // Te lleva a la pantalla del juego
+            
+            // Temporizador de 15 segundos (15000). Si quieres 40 seg, cambia a 40000.
+            setTimeout(function() {
+                cambiarPantalla(juegoId, 'pantalla-final');
+            }, 15000); 
+        }
+    </script>
+    </body>
 </html>
