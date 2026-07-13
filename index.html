@@ -10,8 +10,8 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #000000; /* Fondo negro puro */
-            color: #ffffff; /* Texto blanco */
+            background-color: #000000; 
+            color: #ffffff; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,7 +25,7 @@
             box-sizing: border-box;
         }
 
-        /* --- PANTALLA DE INICIO --- */
+        /* --- INICIO Y MENÚ --- */
         .contenedor-inicio {
             display: flex;
             flex-direction: column;
@@ -38,11 +38,10 @@
             max-width: 350px;
             height: auto;
             margin-bottom: 30px;
-            /* Al tener el logo fondo negro y la app también, se verá como una sola pantalla */
         }
         .boton-ingresar {
-            background-color: transparent; /* Fondo transparente */
-            color: #a855f7; /* Letras moradas combinando con tu logo */
+            background-color: transparent;
+            color: #a855f7; 
             border: 2px solid #a855f7;
             padding: 15px 50px;
             font-size: 20px;
@@ -50,27 +49,23 @@
             letter-spacing: 2px;
             cursor: pointer;
             border-radius: 30px;
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); /* Efecto de brillo / neón */
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); 
             transition: 0.3s;
             text-transform: uppercase;
         }
-
-        /* --- PANTALLA DE MENÚ --- */
         .texto-escape {
             font-size: 16px;
-            color: #cccccc; /* Gris claro para que no canse la vista */
+            color: #cccccc; 
             line-height: 1.5;
             margin-bottom: 30px;
         }
         h3 {
-            color: #a855f7; /* Título morado */
+            color: #a855f7; 
             margin-bottom: 20px;
             font-size: 22px;
         }
-        
-        /* Botones anchos para los nombres de los juegos */
         .boton-juego {
-            background-color: #1a1a1a; /* Gris muy oscuro */
+            background-color: #1a1a1a; 
             color: white;
             border: 1px solid #333;
             padding: 15px 20px;
@@ -82,7 +77,6 @@
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
-        
         .boton-volver {
             background-color: #f44336;
             color: white;
@@ -95,10 +89,8 @@
             cursor: pointer;
             margin-top: 30px;
         }
-        
-        .oculto {
-            display: none !important;
-        }
+        .oculto { display: none !important; }
+
         /* --- ANIMACIONES DE CARGA --- */
         @keyframes girar {
             from { transform: rotate(0deg); }
@@ -109,7 +101,7 @@
             to { opacity: 0.3; }
         }
         .loading-container {
-            margin-top: 50px;
+            margin-top: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -119,7 +111,7 @@
             height: 70px;
             border-radius: 50%;
             border: 2px solid #a855f7;
-            animation: girar 2s linear infinite; /* Hace girar el logo */
+            animation: girar 2s linear infinite; 
         }
         .loading-texto {
             color: #a855f7;
@@ -127,121 +119,248 @@
             margin-top: 15px;
             font-weight: bold;
             letter-spacing: 3px;
-            animation: parpadear 1s infinite alternate; /* Efecto titilante */
+            animation: parpadear 1s infinite alternate; 
         }
-        /* --- ESTILO DE LA REFLEXIÓN --- */
         .texto-perspectiva {
             font-size: 14px;
             color: #999999;
             line-height: 1.5;
             margin-top: 35px;
             padding-top: 20px;
-            border-top: 1px solid #333333; /* Línea divisoria elegante */
+            border-top: 1px solid #333333; 
             font-style: italic;
         }
-        .texto-perspectiva strong {
-            color: #a855f7; /* Morado del logo */
+        .texto-perspectiva strong { color: #a855f7; }
+
+        /* --- ESTILOS DEL JUEGO ACTIVO --- */
+        .reloj {
+            font-size: 30px;
+            font-weight: bold;
+            color: #ff3333;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255,51,51,0.5);
         }
+        .mision-texto {
+            font-size: 18px;
+            background-color: #111;
+            padding: 15px;
+            border-left: 4px solid #a855f7;
+            text-align: left;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .opcion-btn {
+            background-color: #222;
+            color: white;
+            border: 1px solid #a855f7;
+            padding: 15px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.2s;
+        }
+        .opcion-btn:hover { background-color: #a855f7; color: black; }
+        
+        .pantalla-resultado {
+            padding: 40px 20px;
+        }
+        .titulo-victoria { color: #4CAF50; font-size: 35px; }
+        .titulo-derrota { color: #f44336; font-size: 35px; }
     </style>
 </head>
 <body>
 
+    <!-- 1. PANTALLA PRINCIPAL -->
     <div id="inicio" class="pantalla contenedor-inicio">
         <img src="logo.jpg" alt="Crowlning Skills Logo" class="imagen-fondo">
         <button class="boton-ingresar" onclick="cambiarPantalla('inicio', 'menu')">INGRESAR</button>
     </div>
 
- <!-- 2. PANTALLA DE MENÚ -->
+    <!-- 2. PANTALLA DE MENÚ -->
     <div id="menu" class="pantalla oculto">
         <p class="texto-escape">Simulador de EscapeRoom que pone a prueba al estudiante con problemas de razonamiento lógico en un tiempo determinado.</p>
-        
         <h3>Elija el modo de juego</h3>
-        
-        <!-- Botones con los nombres oficiales y llamando a la nueva función -->
-        <button class="boton-juego" onclick="iniciarJuego('juego1')">1. Código de Evacuación</button>
-        <button class="boton-juego" onclick="iniciarJuego('juego2')">2. Reacción en Cadena</button>
-        <button class="boton-juego" onclick="iniciarJuego('juego3')">3. Colapso del Servidor</button>
-        <button class="boton-juego" onclick="iniciarJuego('juego4')">4. La Bóveda del Inversor</button>
-        <button class="boton-juego" onclick="iniciarJuego('juego5')">5. El Último Dilema</button>
-        
+        <button class="boton-juego" onclick="prepararJuego('juego1')">1. Código de Evacuación</button>
+        <button class="boton-juego" onclick="prepararJuego('juego2')">2. Reacción en Cadena</button>
+        <button class="boton-juego" onclick="prepararJuego('juego3')">3. Colapso del Servidor</button>
+        <button class="boton-juego" onclick="prepararJuego('juego4')">4. La Bóveda del Inversor</button>
+        <button class="boton-juego" onclick="prepararJuego('juego5')">5. El Último Dilema</button>
         <button class="boton-volver" onclick="cambiarPantalla('menu', 'inicio')">Volver al Inicio</button>
     </div>
 
-    <!-- 3. PANTALLAS DE CADA JUEGO (Con Textos y Animación) -->
-   <!-- 3. PANTALLAS DE CADA JUEGO (Con Textos, Animación y Reflexión) -->
-    <div id="juego1" class="pantalla oculto">
-        <h2>Código de Evacuación</h2>
-        <p class="texto-escape">Estás atrapado en un laboratorio sellado. Encuentra el error de sintaxis en el manual y redacta una instrucción clara para el escáner antes de quedarte sin oxígeno.</p>
+    <!-- 3. PANTALLA DE CARGA GLOBAL -->
+    <div id="pantalla-carga" class="pantalla oculto">
+        <h2 id="carga-titulo">Cargando Misión...</h2>
+        <p class="texto-escape" id="carga-desc">Analizando el entorno...</p>
         <div class="loading-container">
             <img src="logo.jpg" class="cargando-logo" alt="Cargando">
             <div class="loading-texto">LOADING...</div>
         </div>
-        <p class="texto-perspectiva"><strong>El Propósito:</strong> En la EPN solemos ver materias como COE como un simple requisito. Este reto cambia esa perspectiva: demuestra que la solución técnica más brillante fracasa si el ingeniero no sabe redactarla y comunicarla con claridad bajo presión.</p>
+        <p class="texto-perspectiva" id="carga-reflexion"></p>
     </div>
 
-    <div id="juego2" class="pantalla oculto">
-        <h2>Reacción en Cadena</h2>
-        <p class="texto-escape">Hay una fuga química. Tu compañero está en pánico al otro lado del cristal. Usa la empatía para convencerlo de que presione la purga de seguridad.</p>
-        <div class="loading-container">
-            <img src="logo.jpg" class="cargando-logo" alt="Cargando">
-            <div class="loading-texto">LOADING...</div>
+    <!-- 4. PANTALLA DE JUGABILIDAD (Se llena automáticamente) -->
+    <div id="pantalla-juego" class="pantalla oculto">
+        <h2 id="juego-titulo" style="color: #a855f7;">Nivel Activo</h2>
+        <div class="reloj" id="tiempo-restante">20</div>
+        <div class="mision-texto" id="juego-mision">Misión actual...</div>
+        <div id="contenedor-opciones">
+            <!-- Los botones se insertan aquí vía JavaScript -->
         </div>
-        <p class="texto-perspectiva"><strong>El Propósito:</strong> Creemos que un ingeniero solo necesita dominar los números, pero en crisis reales lidiamos con personas. Este nivel evidencia que la empatía y la inteligencia emocional son herramientas de supervivencia profesional.</p>
     </div>
 
-    <div id="juego3" class="pantalla oculto">
-        <h2>Colapso del Servidor</h2>
-        <p class="texto-escape">La red principal va a caer. Tienes a tres técnicos discutiendo por radio. Media en el conflicto y coordínalos antes del colapso total.</p>
-        <div class="loading-container">
-            <img src="logo.jpg" class="cargando-logo" alt="Cargando">
-            <div class="loading-texto">LOADING...</div>
-        </div>
-        <p class="texto-perspectiva"><strong>El Propósito:</strong> De nada sirve calcular perfectamente una estructura si tu equipo está desmoronándose. Aquí transformamos la visión de las humanidades, mostrándolas como el verdadero motor del liderazgo y el trabajo en equipo.</p>
+    <!-- 5. RESULTADOS -->
+    <div id="resultado-victoria" class="pantalla pantalla-resultado oculto">
+        <h1 class="titulo-victoria">¡Misión Superada!</h1>
+        <p class="texto-escape" id="feedback-victoria">Tomaste la decisión correcta. Demostraste que un ingeniero necesita más que solo números.</p>
+        <button class="boton-volver" onclick="cambiarPantalla('resultado-victoria', 'menu')" style="background-color: #4CAF50;">Siguiente Nivel</button>
     </div>
 
-    <div id="juego4" class="pantalla oculto">
-        <h2>La Bóveda del Inversor</h2>
-        <p class="texto-escape">Una IA bloquea la puerta. Debes armar un pitch persuasivo. Si usas pura jerga técnica y números, la bóveda se bloqueará para siempre.</p>
-        <div class="loading-container">
-            <img src="logo.jpg" class="cargando-logo" alt="Cargando">
-            <div class="loading-texto">LOADING...</div>
-        </div>
-        <p class="texto-perspectiva"><strong>El Propósito:</strong> La Poli nos hace expertos técnicos, pero el mundo real exige que vendamos nuestras ideas. Este reto busca que el estudiante entienda que defender un proyecto es tan vital como diseñarlo.</p>
+    <div id="resultado-derrota" class="pantalla pantalla-resultado oculto">
+        <h1 class="titulo-derrota">Sistemas Colapsados</h1>
+        <p class="texto-escape" id="feedback-derrota">Un error en la toma de decisiones causó una falla catastrófica.</p>
+        <button class="boton-volver" onclick="cambiarPantalla('resultado-derrota', 'menu')">Intentar de nuevo</button>
     </div>
 
-    <div id="juego5" class="pantalla oculto">
-        <h2>El Último Dilema</h2>
-        <p class="texto-escape">Llegaste al final. Debes decidir si desviar energía para salvar datos críticos o salvar la estructura. Usa tu ética profesional.</p>
-        <div class="loading-container">
-            <img src="logo.jpg" class="cargando-logo" alt="Cargando">
-            <div class="loading-texto">LOADING...</div>
-        </div>
-        <p class="texto-perspectiva"><strong>El Propósito:</strong> No hay ecuaciones para la ética. Este desafío final culmina nuestro cambio de perspectiva, probando que el impacto social de un ingeniero politécnico se define por sus valores y toma de decisiones.</p>
-    </div>
-
-    <!-- 4. PANTALLA FINAL -->
-    <div id="pantalla-final" class="pantalla oculto">
-        <h2 style="color: #a855f7;">¡Tiempo Agotado!</h2>
-        <p class="texto-escape">La misión ha finalizado. La Escuela Politécnica Nacional necesita ingenieros capaces de liderar en crisis reales.</p>
-        <button class="boton-volver" onclick="cambiarPantalla('pantalla-final', 'inicio')">Volver al Inicio</button>
-    </div>
-
-    <!-- SCRIPT DE LÓGICA Y TIEMPO -->
+    <!-- LÓGICA DEL JUEGO -->
     <script>
+        // BASE DE DATOS DE LOS MINIJUEGOS
+        const baseDeDatos = {
+            'juego1': {
+                titulo: "Código de Evacuación",
+                desc: "Estás atrapado en un laboratorio sellado. Encuentra el error de sintaxis en el manual y redacta una instrucción clara.",
+                reflexion: "El Propósito: La solución técnica más brillante fracasa si el ingeniero no sabe redactarla y comunicarla con claridad bajo presión (COE).",
+                mision: "El sistema dicta: 'Proceder a no deshabilitar el cierre si la presión no es inestable'. El oxígeno baja. ¿Cuál es la instrucción correcta sin ambigüedades?",
+                tiempo: 25,
+                opciones: [
+                    { texto: "A. Mantener la puerta cerrada si la presión es estable.", correcta: true },
+                    { texto: "B. No habilitar el cierre si la presión es inestable.", correcta: false },
+                    { texto: "C. Deshabilitar el cierre temporal para estabilizar.", correcta: false }
+                ]
+            },
+            'juego2': {
+                titulo: "Reacción en Cadena",
+                desc: "Fuga de un líquido con alta tensión superficial. Tu compañero está en pánico. Usa la empatía.",
+                reflexion: "El Propósito: En crisis reales lidiamos con personas. La inteligencia emocional es una herramienta de supervivencia profesional.",
+                mision: "Tu compañero tiene la válvula, pero está asustado por las fuerzas intermoleculares del líquido. ¿Qué le dices por la radio?",
+                tiempo: 20,
+                opciones: [
+                    { texto: "A. '¡La tensión va a colapsar el tanque, presiona el botón ya o morimos!'", correcta: false },
+                    { texto: "B. 'Escúchame, el cristal resistirá. Te guiaré paso a paso. Confía en mí y tira de la palanca.'", correcta: true },
+                    { texto: "C. '¡Si no lo haces tú en 5 segundos, lo haré yo y te reportaré!'", correcta: false }
+                ]
+            },
+            'juego3': {
+                titulo: "Colapso del Servidor",
+                desc: "La red principal va a caer. Tienes a tres técnicos discutiendo por radio. Media en el conflicto.",
+                reflexion: "El Propósito: De nada sirve calcular perfectamente una estructura si tu equipo está desmoronándose.",
+                mision: "Necesitas que traspongan la matriz del servidor, pero el Técnico A y B están gritándose por quién tuvo la culpa.",
+                tiempo: 20,
+                opciones: [
+                    { texto: "A. '¡Silencio! Traspongan la matriz ahora mismo o los despido a los dos.'", correcta: false },
+                    { texto: "B. 'A, tienes razón en quejarte. B, arregla la matriz rápido para compensar tu error.'", correcta: false },
+                    { texto: "C. 'El error ya pasó. A, aísla el sector; B, inicia la trasposición de la matriz. Analizaremos el fallo luego.'", correcta: true }
+                ]
+            },
+            'juego4': {
+                titulo: "La Bóveda del Inversor",
+                desc: "Una IA bloquea la puerta. Debes armar un pitch persuasivo y evitar la jerga.",
+                reflexion: "El Propósito: La Poli nos hace expertos técnicos, pero el mundo real exige que vendamos nuestras ideas.",
+                mision: "La IA exige: 'Justifique la viabilidad financiera de su diseño estructural en 15 segundos.'",
+                tiempo: 15,
+                opciones: [
+                    { texto: "A. 'El coeficiente de elasticidad reduce el coste bruto en un 15.3%.'", correcta: false },
+                    { texto: "B. 'Este diseño reduce costos operativos y asegura la escalabilidad a largo plazo para la empresa.'", correcta: true },
+                    { texto: "C. 'Calculamos las derivadas del presupuesto usando tensores y el límite tiende a cero.'", correcta: false }
+                ]
+            },
+            'juego5': {
+                titulo: "El Último Dilema",
+                desc: "Llegaste al final. Toma una decisión ética crítica.",
+                reflexion: "El Propósito: No hay ecuaciones para la ética. El impacto social se define por los valores.",
+                mision: "La falla es inminente. Tienes energía para una sola acción: Salvar los datos de investigación de 5 años, o sellar las tuberías para evitar que contamine el río cercano.",
+                tiempo: 20,
+                opciones: [
+                    { texto: "A. Salvar los datos. La investigación es propiedad de la empresa y vale millones.", correcta: false },
+                    { texto: "B. Sellar las tuberías. La responsabilidad social y ambiental es prioritaria ante cualquier activo.", correcta: true }
+                ]
+            }
+        };
+
+        let temporizador;
+
         function cambiarPantalla(pantallaActual, pantallaNueva) {
             document.getElementById(pantallaActual).classList.add('oculto');
             document.getElementById(pantallaNueva).classList.remove('oculto');
         }
 
-        // Esta función arranca al elegir un juego
-        function iniciarJuego(juegoId) {
-            cambiarPantalla('menu', juegoId); // Te lleva a la pantalla del juego
+        // 1. Prepara la pantalla de carga con los datos correctos
+        function prepararJuego(id) {
+            const data = baseDeDatos[id];
+            document.getElementById('carga-titulo').innerText = data.titulo;
+            document.getElementById('carga-desc').innerText = data.desc;
+            document.getElementById('carga-reflexion').innerHTML = `<strong>${data.reflexion}</strong>`;
             
-            // Temporizador de 15 segundos (15000). Si quieres 40 seg, cambia a 40000.
-            setTimeout(function() {
-                cambiarPantalla(juegoId, 'pantalla-final');
-            }, 15000); 
+            cambiarPantalla('menu', 'pantalla-carga');
+
+            // Tiempo de loading: 5000 = 5 segundos.
+            setTimeout(() => { iniciarJugabilidad(data); }, 5000); 
+        }
+
+        // 2. Inicia el juego interactivo
+        function iniciarJugabilidad(data) {
+            cambiarPantalla('pantalla-carga', 'pantalla-juego');
+            
+            document.getElementById('juego-titulo').innerText = data.titulo;
+            document.getElementById('juego-mision').innerText = data.mision;
+            
+            // Generar botones de opciones
+            const contenedor = document.getElementById('contenedor-opciones');
+            contenedor.innerHTML = ""; // Limpiar opciones anteriores
+            
+            data.opciones.forEach(opcion => {
+                const btn = document.createElement('button');
+                btn.className = 'opcion-btn';
+                btn.innerText = opcion.texto;
+                btn.onclick = () => evaluarRespuesta(opcion.correcta);
+                contenedor.appendChild(btn);
+            });
+
+            // Iniciar Reloj
+            let tiempo = data.tiempo;
+            document.getElementById('tiempo-restante').innerText = tiempo;
+            
+            clearInterval(temporizador);
+            temporizador = setInterval(() => {
+                tiempo--;
+                document.getElementById('tiempo-restante').innerText = tiempo;
+                if(tiempo <= 0) {
+                    clearInterval(temporizador);
+                    evaluarRespuesta(false, true); // Perdió por tiempo
+                }
+            }, 1000);
+        }
+
+        // 3. Evalúa si ganaste o perdiste
+        function evaluarRespuesta(esCorrecta, porTiempo = false) {
+            clearInterval(temporizador); // Detener el reloj
+            
+            if(esCorrecta) {
+                cambiarPantalla('pantalla-juego', 'resultado-victoria');
+            } else {
+                const msjDerrota = document.getElementById('feedback-derrota');
+                if(porTiempo) {
+                    msjDerrota.innerText = "¡El tiempo se agotó! La indecisión es un riesgo fatal en ingeniería.";
+                } else {
+                    msjDerrota.innerText = "Elegiste mal. Recuerda que la comunicación y empatía son claves para resolver crisis.";
+                }
+                cambiarPantalla('pantalla-juego', 'resultado-derrota');
+            }
         }
     </script>
-    </body>
+
+</body>
 </html>
